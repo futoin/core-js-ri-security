@@ -1,0 +1,62 @@
+{
+  "name": "futoin-security",
+  "version": "0.0.1",
+  "description": "FutoIn Security Concept reference implementation",
+  "main": "lib/main.js",
+  "files": [
+    "dist",
+    "lib",
+    "index.js"
+  ],
+  "engines": {
+    "node": ">=6"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/futoin/core-js-ri-security.git"
+  },
+  "keywords": [
+    "futoin",
+    "security",
+    "auth",
+    "authentication",
+    "authorization"
+  ],
+  "author": {
+    "name": "Andrey Galkin",
+    "email": "andrey@futoin.org"
+  },
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/futoin/core-js-ri-security/issues",
+    "email": "support@futoin.org"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-object-assign": "^6.22.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "chai": "^4.1.2",
+    "eslint": "^4.12.1",
+    "futoin-asyncsteps": "^1.10.9",
+    "grunt": "^1.0.1",
+    "grunt-contrib-connect": "^1.0.2",
+    "grunt-eslint": "^20.1.0",
+    "grunt-jsdoc-to-markdown": "^3.0.0",
+    "grunt-mocha-istanbul": "^5.0.2",
+    "grunt-mocha-phantomjs": "^4.0.0",
+    "grunt-text-replace": "^0.4.0",
+    "grunt-webpack": "^3.0.2",
+    "istanbul": "^0.4.5",
+    "mocha": "^4.0.1",
+    "null-loader": "^0.1.1",
+    "webpack": "^3.10.0"
+  },
+  "peerDependencies": {
+    "futoin-asyncsteps": "^1.10.9"
+  }
+}
