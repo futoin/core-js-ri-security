@@ -2,4 +2,6 @@ node_modules/
 coverage/
 out/
 dist/
+.vagrant
 *.tgz
+test/*.db

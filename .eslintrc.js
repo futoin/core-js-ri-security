@@ -67,20 +67,11 @@ module.exports = {
     },
     overrides: [
         {
-            env: {
-                browser: true,
-            },
-            files: [ "lib/browser*.js" ],
-            rules: {
-                strict: [ "error", "function" ],
-                "no-console" : ["off"],
-                "brace-style": ["off"],
-            }
-        },
-        {
             env : {
+                es6: true,
+                node: true,
+                commonjs: true,
                 mocha: true,
-                browser: true,
             },
             files: [ "test/**/*.js" ],
             rules: {
