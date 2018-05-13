@@ -40,6 +40,15 @@ $ yarn add futoin-security --save
 ## Classes
 
 <dl>
+<dt><a href="#ManageFace">ManageFace</a></dt>
+<dd><p>Manage Face</p>
+</dd>
+<dt><a href="#ManageService">ManageService</a></dt>
+<dd><p>Manage Service</p>
+</dd>
+<dt><a href="#ServiceApp">ServiceApp</a></dt>
+<dd><p>All-in-one AuthService initialization</p>
+</dd>
 <dt><a href="#BaseFace">BaseFace</a></dt>
 <dd><p>Base Face with neutral common registration functionality</p>
 </dd>
@@ -48,6 +57,24 @@ $ yarn add futoin-security --save
 </dd>
 </dl>
 
+<a name="ManageFace"></a>
+
+## ManageFace
+Manage Face
+
+**Kind**: global class  
+<a name="ManageService"></a>
+
+## ManageService
+Manage Service
+
+**Kind**: global class  
+<a name="ServiceApp"></a>
+
+## ServiceApp
+All-in-one AuthService initialization
+
+**Kind**: global class  
 <a name="BaseFace"></a>
 
 ## BaseFace
@@ -98,25 +125,25 @@ Base Service with common registration logic
 **Kind**: global class  
 
 * [BaseService](#BaseService)
-    * [new BaseService(storage, options)](#new_BaseService_new)
-    * [.register(as, executor, storage, options)](#BaseService.register) ⇒ <code>LimitsService</code>
+    * [new BaseService(scope, options)](#new_BaseService_new)
+    * [.register(as, executor, scope, options)](#BaseService.register) ⇒ <code>LimitsService</code>
 
 <a name="new_BaseService_new"></a>
 
-### new BaseService(storage, options)
+### new BaseService(scope, options)
 C-tor
 
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| storage | <code>Storage</code> |  | low-level storage instance |
+| scope | <code>object</code> |  | scope of related services |
 | options | <code>object</code> |  | passed to superclass c-tor |
-| options.failure_limit | <code>integer</code> | <code>10000</code> | limit crypt key decrypt failures |
+| options.scope | <code>integer</code> | <code>main.globalScope</code> | scope state |
 
 <a name="BaseService.register"></a>
 
-### BaseService.register(as, executor, storage, options) ⇒ <code>LimitsService</code>
-Register futoin.xfers.limits interface with Executor
+### BaseService.register(as, executor, scope, options) ⇒ <code>LimitsService</code>
+Register Service with Executor
 
 **Kind**: static method of [<code>BaseService</code>](#BaseService)  
 **Returns**: <code>LimitsService</code> - instance  
@@ -125,7 +152,7 @@ Register futoin.xfers.limits interface with Executor
 | --- | --- | --- |
 | as | <code>AsyncSteps</code> | steps interface |
 | executor | <code>Executor</code> | executor instance |
-| storage | <code>Storage</code> | low-level storage instance |
+| scope | <code>object</code> | scope of related services |
 | options | <code>object</code> | implementation defined options |
 
 
