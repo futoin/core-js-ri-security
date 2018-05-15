@@ -31,10 +31,17 @@ const KeyService = require( 'futoin-secvault/KeyService' );
 const DataFace = require( 'futoin-secvault/DataFace' );
 const DataService = require( 'futoin-secvault/DataService' );
 
+const DBGenFace = require( 'futoin-eventstream/DBGenFace' );
+const DBGenService = require( 'futoin-eventstream/DBGenService' );
+const PushFace = require( 'futoin-eventstream/PushFace' );
+const DBPushService = require( 'futoin-eventstream/DBPushService' );
+
 const {
     MANAGE_FACE,
     KEY_FACE,
     DATA_FACE,
+    EVTGEN_FACE,
+    EVTPUSH_FACE,
     scopeTemplate,
 } = require( './lib/main' );
 const ManageFace = require( './ManageFace' );
@@ -44,12 +51,34 @@ const ManageService = require( './ManageService' );
  * All-in-one AuthService initialization
  */
 class ServiceApp {
+    /**
+     * C-tor
+     *
+     * @param {AsyncSteps} as - AsyncSteps interface
+     * @param {object} options={} - options
+     * @param {AdvancedCCM} [options.ccm] - external CCM instance
+     * @param {Executor} [options.publicExecutor] - external public executor instance
+     * @param {Executor} [options.privateExecutor] - external private executor instance
+     * @param {string} [options.storagePassword] - Base64 encoded KEK for storage
+     * @param {object} [options.config] - config overrides for MasterService
+     * @param {object} [options.ccmOptions] - auto-CCM options
+     * @param {callable} [options.notExpectedHandler] - 'notExpected' error handler
+     * @param {object} [options.privateExecutorOptions] - private auto-Executor options
+     * @param {object} [options.publicExecutorOptions] - public auto-Executor options
+     * @param {object} [options.evtOptions] - eventstream options
+     * @param {object} [options.secVaultOptions] - secure vault options
+     */
     constructor( as, options = {} ) {
         let {
             ccm,
             publicExecutor,
             privateExecutor,
+            notExpectedHandler,
+            storagePassword,
         } = options;
+
+        // minimize exposure
+        options.storagePassword = null;
 
         // Scope setup
         const scope = _merge( {}, scopeTemplate );
@@ -64,12 +93,12 @@ class ServiceApp {
         // Init of standard FutoIn components
         if ( !ccm ) {
             ccm = new AdvancedCCM( options.ccmOptions );
-        } else {
-            ccm.once( 'close', () => {
-                this._ccm = null;
-                this.close();
-            } );
         }
+
+        ccm.once( 'close', () => {
+            this._ccm = null;
+            this.close();
+        } );
 
         if ( !privateExecutor ) {
             privateExecutor = new Executor( ccm, options.privateExecutorOptions );
@@ -79,6 +108,20 @@ class ServiceApp {
             publicExecutor = new NodeExecutor( ccm, options.publicExecutorOptions );
         }
 
+        if ( !notExpectedHandler ) {
+            notExpectedHandler = function() {
+                // eslint-disable-next-line no-console
+                console.log( arguments );
+            };
+        }
+
+        privateExecutor.on( 'notExpected', notExpectedHandler );
+        publicExecutor.on( 'notExpected', notExpectedHandler );
+
+        this._ccm = ccm;
+        this._private_executor = privateExecutor;
+        this._public_executor = publicExecutor;
+
         // Common database
         DBAutoConfig( as, ccm, {
             ftnsec: {},
@@ -86,29 +129,52 @@ class ServiceApp {
         ccm.alias( '#db.ftnsec', '#db.secvault' );
         ccm.alias( '#db.ftnsec', '#db.evt' );
 
-        const sv_storage = new SQLStorage( ccm );
-        KeyService.register( as, privateExecutor, sv_storage, options.secVaultOptions );
-        KeyFace.register( as, ccm, KEY_FACE, privateExecutor );
-        DataService.register( as, privateExecutor, sv_storage, options.secVaultOptions );
-        DataFace.register( as, ccm, DATA_FACE, privateExecutor );
+        as.add( ( as ) => {
+            // EvtStream
+            DBGenService.register( as, privateExecutor, options.evtOptions );
+            DBGenFace.register( as, ccm, EVTGEN_FACE, privateExecutor );
+            DBPushService.register( as, privateExecutor, options.evtOptions );
+            PushFace.register( as, ccm, EVTPUSH_FACE, privateExecutor );
 
-        // Init of FutoIn Security services
-        ManageService.register( as, privateExecutor, scope );
-        ManageFace.register( as, ccm, MANAGE_FACE, privateExecutor );
+            // SecVault
+            const sv_storage = new SQLStorage( ccm );
+            KeyService.register( as, privateExecutor, sv_storage, options.secVaultOptions );
+            KeyFace.register( as, ccm, KEY_FACE, privateExecutor );
+            DataService.register( as, privateExecutor, sv_storage, options.secVaultOptions );
+            DataFace.register( as, ccm, DATA_FACE, privateExecutor );
 
-        this._ccm = ccm;
-        this._private_executor = privateExecutor;
-        this._public_executor = publicExecutor;
+            // Init of FutoIn Security services
+            ManageService.register( as, privateExecutor, scope );
+            ManageFace.register( as, ccm, MANAGE_FACE, privateExecutor );
+        } );
 
         as.add( ( as ) => {
             ccm.iface( MANAGE_FACE ).call( as, 'setup', config );
+
+            if ( storagePassword ) {
+                ccm.iface( KEY_FACE ).unlock( as, Buffer.from( storagePassword, 'hex' ) );
+            }
         } );
     }
 
-    close() {
+    /**
+     * CCM instance accessor
+     * @returns {AdvancedCCM} instance
+     */
+    ccm() {
+        return this._ccm;
+    }
+
+    /**
+     * Shutdown of app and related instances
+     * @param {callable} [done] - done callback
+     */
+    close( done=null ) {
         if ( this._ccm ) {
             this._ccm.close();
             this._ccm = null;
+
+            this._public_executor.close( done );
         }
 
         this._private_executor = null;

@@ -62,5 +62,8 @@
     "futoin-executor": "^1.8.7",
     "futoin-invoker": "^1.8.5",
     "futoin-secvault": "^0.9.4"
+  },
+  "dependencies": {
+    "futoin-uuid": "^1.0.0"
   }
 }

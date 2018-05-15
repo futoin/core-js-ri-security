@@ -75,6 +75,52 @@ Manage Service
 All-in-one AuthService initialization
 
 **Kind**: global class  
+
+* [ServiceApp](#ServiceApp)
+    * [new ServiceApp(as, options)](#new_ServiceApp_new)
+    * [.ccm()](#ServiceApp+ccm) ⇒ <code>AdvancedCCM</code>
+    * [.close([done])](#ServiceApp+close)
+
+<a name="new_ServiceApp_new"></a>
+
+### new ServiceApp(as, options)
+C-tor
+
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| as | <code>AsyncSteps</code> |  | AsyncSteps interface |
+| options | <code>object</code> | <code>{}</code> | options |
+| [options.ccm] | <code>AdvancedCCM</code> |  | external CCM instance |
+| [options.publicExecutor] | <code>Executor</code> |  | external public executor instance |
+| [options.privateExecutor] | <code>Executor</code> |  | external private executor instance |
+| [options.storagePassword] | <code>string</code> |  | Base64 encoded KEK for storage |
+| [options.config] | <code>object</code> |  | config overrides for MasterService |
+| [options.ccmOptions] | <code>object</code> |  | auto-CCM options |
+| [options.notExpectedHandler] | <code>callable</code> |  | 'notExpected' error handler |
+| [options.privateExecutorOptions] | <code>object</code> |  | private auto-Executor options |
+| [options.publicExecutorOptions] | <code>object</code> |  | public auto-Executor options |
+| [options.evtOptions] | <code>object</code> |  | eventstream options |
+| [options.secVaultOptions] | <code>object</code> |  | secure vault options |
+
+<a name="ServiceApp+ccm"></a>
+
+### serviceApp.ccm() ⇒ <code>AdvancedCCM</code>
+CCM instance accessor
+
+**Kind**: instance method of [<code>ServiceApp</code>](#ServiceApp)  
+**Returns**: <code>AdvancedCCM</code> - instance  
+<a name="ServiceApp+close"></a>
+
+### serviceApp.close([done])
+Shutdown of app and related instances
+
+**Kind**: instance method of [<code>ServiceApp</code>](#ServiceApp)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [done] | <code>callable</code> | <code></code> | done callback |
+
 <a name="BaseFace"></a>
 
 ## BaseFace

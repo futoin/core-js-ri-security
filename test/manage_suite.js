@@ -6,13 +6,17 @@ const {
     MANAGE_FACE,
 } = require( '../lib/main' );
 
-module.exports = function( describe, it, vars ) {
-    const ccm = vars.ccm;
+module.exports = function( { it, vars } ) {
+    let ccm;
+
+    before( 'manage', () => {
+        ccm = vars.ccm;
+    } );
 
     it ( 'get config', $as_test( ( as ) => {
         ccm.iface( MANAGE_FACE ).genConfig( as );
         as.add( ( as, res ) => expect( res ).to.eql( {
-            domain: 'example.com',
+            domains: [ 'example.com' ],
             clear_auth: false,
             mac_auth: false,
             master_auth: false,
@@ -21,11 +25,23 @@ module.exports = function( describe, it, vars ) {
         } ) );
     } ) );
 
+    it ( 'should refuse to ensure user', $as_test(
+        ( as ) => {
+            const mf = ccm.iface( MANAGE_FACE );
+            mf.ensureUser( as, 'user1', 'example.org' );
+        },
+        ( as, err ) => {
+            expect( err ).to.equal( 'InternalError' );
+            expect( as.state.error_info ).to.equal( 'AuthService is not enabled' );
+            as.success();
+        }
+    ) );
+
     it ( 'should config', $as_test( ( as ) => {
         const mf = ccm.iface( MANAGE_FACE );
 
         mf.setup( as,
-            'example.org',
+            [ 'example.com', 'example.org' ],
             true,
             true,
             true,
@@ -33,12 +49,62 @@ module.exports = function( describe, it, vars ) {
             true );
         mf.genConfig( as );
         as.add( ( as, res ) => expect( res ).to.eql( {
-            domain: 'example.org',
+            domains: [ 'example.com', 'example.org' ],
             clear_auth: true,
             mac_auth: true,
             master_auth: true,
             master_auto_reg: true,
             auth_service: true,
         } ) );
+    } ) );
+
+    it ( 'should ensure local user', $as_test( ( as ) => {
+        const mf = ccm.iface( MANAGE_FACE );
+        let local_id;
+
+        mf.ensureUser( as, 'user1', 'example.org' );
+        as.add( ( as, res ) => {
+            local_id = res;
+        } );
+
+        mf.ensureUser( as, 'user1', 'example.org' );
+        as.add( ( as, res ) => expect( res ).equal( local_id ) );
+
+        mf.ensureUser( as, 'user1', 'example.com' );
+        as.add( ( as, res ) => expect( res ).not.equal( local_id ) );
+    } ) );
+
+    it ( 'should ensure local service', $as_test( ( as ) => {
+        const mf = ccm.iface( MANAGE_FACE );
+        let local_id;
+
+        mf.ensureService( as, 'service1', 'example.org' );
+        as.add( ( as, res ) => {
+            local_id = res;
+        } );
+
+        mf.ensureService( as, 'service1', 'example.org' );
+        as.add( ( as, res ) => expect( res ).equal( local_id ) );
+
+        mf.ensureService( as, 'service1', 'example.com' );
+        as.add( ( as, res ) => expect( res ).not.equal( local_id ) );
+    } ) );
+
+    it ( 'should ensure foreign user with race', $as_test( ( as ) => {
+        const mf = ccm.iface( MANAGE_FACE );
+
+        const p = as.parallel();
+        let local_id;
+
+        p.add( ( as ) => {
+            mf.ensureUser( as, 'user1', 'example.net' );
+            as.add( ( as, res ) => {
+                local_id = res;
+            } );
+        } );
+        p.add( ( as ) => {
+            mf.ensureUser( as, 'user1', 'example.net' );
+            as.add( ( as, res ) => expect( res ).equal( local_id ) );
+        } );
     } ) );
 };
