@@ -4,6 +4,7 @@ const expect = require( 'chai' ).expect;
 const $as_test = require( 'futoin-asyncsteps/testcase' );
 const $as = require( 'futoin-asyncsteps' );
 const ServiceApp = require( '../ServiceApp' );
+const SpecTools = require( 'futoin-invoker/SpecTools' );
 
 const {
     KEY_FACE,
@@ -32,6 +33,10 @@ module.exports = function( describe, it, databaseConfig ) {
             storagePassword: STORAGE_PASSWORD,
         } );
         vars.ccm = vars.app.ccm();
+
+        SpecTools.on( 'error', function() {
+            // console.log( arguments );
+        } );
     } ) );
 
     after( 'specific', function( done ) {

@@ -60,34 +60,28 @@ module.exports = function( { it, vars } ) {
 
     it ( 'should ensure local user', $as_test( ( as ) => {
         const mf = ccm.iface( MANAGE_FACE );
-        let local_id;
 
         mf.ensureUser( as, 'user1', 'example.org' );
-        as.add( ( as, res ) => {
-            local_id = res;
+        as.add( ( as, local_id ) => {
+            mf.ensureUser( as, 'user1', 'example.org' );
+            as.add( ( as, res ) => expect( res ).equal( local_id ) );
+
+            mf.ensureUser( as, 'user1', 'example.com' );
+            as.add( ( as, res ) => expect( res ).not.equal( local_id ) );
         } );
-
-        mf.ensureUser( as, 'user1', 'example.org' );
-        as.add( ( as, res ) => expect( res ).equal( local_id ) );
-
-        mf.ensureUser( as, 'user1', 'example.com' );
-        as.add( ( as, res ) => expect( res ).not.equal( local_id ) );
     } ) );
 
     it ( 'should ensure local service', $as_test( ( as ) => {
         const mf = ccm.iface( MANAGE_FACE );
-        let local_id;
 
         mf.ensureService( as, 'service1', 'example.org' );
-        as.add( ( as, res ) => {
-            local_id = res;
+        as.add( ( as, local_id ) => {
+            mf.ensureService( as, 'service1', 'example.org' );
+            as.add( ( as, res ) => expect( res ).equal( local_id ) );
+
+            mf.ensureService( as, 'service1', 'example.com' );
+            as.add( ( as, res ) => expect( res ).not.equal( local_id ) );
         } );
-
-        mf.ensureService( as, 'service1', 'example.org' );
-        as.add( ( as, res ) => expect( res ).equal( local_id ) );
-
-        mf.ensureService( as, 'service1', 'example.com' );
-        as.add( ( as, res ) => expect( res ).not.equal( local_id ) );
     } ) );
 
     it ( 'should ensure foreign user with race', $as_test( ( as ) => {
@@ -107,4 +101,45 @@ module.exports = function( { it, vars } ) {
             as.add( ( as, res ) => expect( res ).equal( local_id ) );
         } );
     } ) );
+
+    it ( 'should update user info', $as_test( ( as ) => {
+        const mf = ccm.iface( MANAGE_FACE );
+
+        mf.ensureUser( as, 'user2', 'example.org' );
+        as.add( ( as, local_id ) => {
+            mf.getUserInfo( as, local_id );
+            as.add( ( as, res ) => expect( res ).eql( {
+                local_id,
+                global_id: 'user2@example.org',
+                is_local: true,
+                is_service: false,
+                is_enabled: true,
+                created : res.created,
+                updated : res.updated,
+            } ) );
+
+            mf.setUserInfo( as, local_id, false );
+            as.add( ( as, res ) => expect( res ).to.be.true );
+
+            mf.getUserInfo( as, local_id );
+            as.add( ( as, res ) => expect( res ).eql( {
+                local_id,
+                global_id: 'user2@example.org',
+                is_local: true,
+                is_service: false,
+                is_enabled: false,
+                created : res.created,
+                updated : res.updated,
+            } ) );
+        } );
+    } ) );
+
+    it ( 'should fail on unknown user', $as_test(
+        ( as ) => ccm.iface( MANAGE_FACE ).getUserInfo( as, '1234567890123456789012' ),
+        ( as, err ) => {
+            expect( err ).to.equal( 'UnknownUser' );
+            expect( as.state.error_info ).to.equal( 'UserID: 1234567890123456789012' );
+            as.success();
+        }
+    ) );
 };

@@ -56,6 +56,33 @@
         "domain": "GlobalService"
       },
       "result": "LocalUserID"
+    },
+    "getUserInfo": {
+      "params": {
+        "local_id": "LocalUserID"
+      },
+      "result": {
+        "local_id": "LocalUserID",
+        "global_id": "GlobalUserID",
+        "is_local": "boolean",
+        "is_enabled": "boolean",
+        "is_service": "boolean",
+        "created": "Timestamp",
+        "updated": "Timestamp"
+      },
+      "throws": [
+        "UnknownUser"
+      ]
+    },
+    "setUserInfo": {
+      "params": {
+        "local_id": "LocalUserID",
+        "is_enabled": "boolean"
+      },
+      "result": "boolean",
+      "throws": [
+        "UnknownUser"
+      ]
     }
   },
   "requires": [

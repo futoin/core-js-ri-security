@@ -958,9 +958,9 @@ futoin-hkdf@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/futoin-hkdf/-/futoin-hkdf-1.0.1.tgz#1df3ffe331039e3b8e09326962b0fa078092a7ee"
 
-futoin-invoker@^1.8.5:
-  version "1.8.5"
-  resolved "https://registry.yarnpkg.com/futoin-invoker/-/futoin-invoker-1.8.5.tgz#a4dff06cc4ff302b06cf0869cc276492a7ee0b21"
+futoin-invoker@^1.8.6:
+  version "1.8.6"
+  resolved "https://registry.yarnpkg.com/futoin-invoker/-/futoin-invoker-1.8.6.tgz#50367c7129486c2fd89c9e3e101f618c384f1b17"
   dependencies:
     agentkeepalive "^3.4.1"
     detect-node "^2.0.3"
@@ -1743,7 +1743,7 @@ mocha@^5.1.1:
     mkdirp "0.5.1"
     supports-color "4.4.0"
 
-moment@^2.20.1:
+moment@^2.20.1, moment@^2.22.1:
   version "2.22.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.1.tgz#529a2e9bf973f259c9643d237fda84de3a26e8ad"
 
@@ -2180,8 +2180,8 @@ request@2.81.0:
     uuid "^3.0.0"
 
 request@^2.85.0:
-  version "2.85.0"
-  resolved "https://registry.yarnpkg.com/request/-/request-2.85.0.tgz#5a03615a47c61420b3eb99b7dba204f83603e1fa"
+  version "2.86.0"
+  resolved "https://registry.yarnpkg.com/request/-/request-2.86.0.tgz#2b9497f449b0a32654c081a5cf426bbfb5bf5b69"
   dependencies:
     aws-sign2 "~0.7.0"
     aws4 "^1.6.0"
@@ -2201,7 +2201,6 @@ request@^2.85.0:
     performance-now "^2.1.0"
     qs "~6.5.1"
     safe-buffer "^5.1.1"
-    stringstream "~0.0.5"
     tough-cookie "~2.3.3"
     tunnel-agent "^0.6.0"
     uuid "^3.1.0"
@@ -2448,7 +2447,7 @@ string_decoder@~1.1.1:
   dependencies:
     safe-buffer "~5.1.0"
 
-stringstream@~0.0.4, stringstream@~0.0.5:
+stringstream@~0.0.4:
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/stringstream/-/stringstream-0.0.5.tgz#4e484cd4de5a0bbbee18e46307710a8a81621878"
 
