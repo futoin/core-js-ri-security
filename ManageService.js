@@ -43,29 +43,45 @@ class ManageService extends BaseService {
     }
 
     setup( as, reqinfo ) {
-        _merge( this._scope.config, reqinfo.params() );
-        reqinfo.result( true );
+        const ccm = reqinfo.ccm();
+        const scope = this._scope;
+        const { config } = scope;
+        _merge( config, reqinfo.params() );
+
+        const domain2service = {};
+
+        if ( config.auth_service ) {
+            as.forEach( config.domains, ( as, _, global_id ) => {
+                this._ensureNoChecks( as, {
+                    ccm,
+                    global_id,
+                    is_local: true,
+                    is_service: true,
+                } );
+
+                as.add( ( as, local_id ) => {
+                    domain2service[global_id] = local_id;
+                } );
+            } );
+        }
+
+        as.add( ( as ) => {
+            // atomic change
+            Object.freeze( domain2service );
+            scope.domain2service = domain2service;
+
+            reqinfo.result( true );
+        } );
     }
 
     genConfig( as, _reqinfo ) {
         as.success( this._scope.config );
     }
 
-    _ensureCommon( as, global_id, reqinfo, is_service ) {
-        const { config } = this._scope;
-
-        if ( !config.auth_service ) {
-            as.error( Errors.InternalError, 'AuthService is not enabled' );
-        }
-
-        //---
-
-        const ccm = reqinfo.ccm();
+    _ensureNoChecks( as, { ccm, global_id, is_local, is_service } ) {
         const db = ccm.db( 'ftnsec' );
         const evt = ccm.iface( EVTGEN_FACE );
-
-        const { domain } = reqinfo.params();
-        const is_local = config.domains.indexOf( domain ) >= 0;
+        let local_id;
 
         as.repeat( 2, ( as ) => {
             db
@@ -79,11 +95,11 @@ class ManageService extends BaseService {
 
             as.add( ( as, { rows } ) => {
                 if ( rows.length === 1 ) {
-                    reqinfo.result( rows[0][0] );
+                    local_id = rows[0][0];
                     as.break();
                 }
 
-                const local_id = UUIDTool.genB64();
+                local_id = UUIDTool.genB64();
                 const user_info = {
                     local_id,
                     global_id,
@@ -101,19 +117,36 @@ class ManageService extends BaseService {
                 evt.addXferEvent( xfer, 'USR_NEW', user_info );
 
                 as.add(
-                    ( as ) => xfer.execute( as ),
+                    ( as ) => {
+                        xfer.execute( as );
+                        as.add( ( as ) => as.break() );
+                    },
                     ( as, err ) => {
                         if ( err === 'Duplicate' ) {
                             as.continue();
                         }
                     }
                 );
-                as.add( ( as ) => {
-                    reqinfo.result( local_id );
-                    as.break();
-                } );
             } );
         } );
+        as.add( ( as ) => as.success( local_id ) );
+    }
+
+    _ensureCommon( as, global_id, reqinfo, is_service ) {
+        const { config } = this._scope;
+
+        if ( !config.auth_service ) {
+            as.error( Errors.InternalError, 'AuthService is not enabled' );
+        }
+
+        //---
+        const { domain } = reqinfo.params();
+        const is_local = config.domains.indexOf( domain ) >= 0;
+
+        //---
+        const ccm = reqinfo.ccm();
+        this._ensureNoChecks( as, { ccm, global_id, is_local, is_service } );
+        as.add( ( as, local_id ) => reqinfo.result( local_id ) );
     }
 
     ensureUser( as, reqinfo ) {
