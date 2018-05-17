@@ -7,7 +7,7 @@ const ServiceApp = require( '../ServiceApp' );
 const SpecTools = require( 'futoin-invoker/SpecTools' );
 
 const {
-    KEY_FACE,
+    SVKEY_FACE,
 } = require( '../lib/main' );
 let httpPort = 8081;
 
@@ -45,5 +45,9 @@ module.exports = function( describe, it, databaseConfig ) {
 
     describe( 'Manage', function() {
         require( './manage_suite' )( { describe, it, vars } );
+    } );
+
+    describe( 'Stateless', function() {
+        require( './stateless_suite' )( { describe, it, vars } );
     } );
 };

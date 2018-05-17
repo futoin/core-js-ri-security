@@ -44,10 +44,22 @@ $ yarn add futoin-security --save
 <dd><p>Manage Face</p>
 </dd>
 <dt><a href="#ManageService">ManageService</a></dt>
-<dd><p>Manage Service</p>
+<dd><p>FTN8: main Manage Service</p>
 </dd>
 <dt><a href="#ServiceApp">ServiceApp</a></dt>
 <dd><p>All-in-one AuthService initialization</p>
+</dd>
+<dt><a href="#SatelessAuthFace">SatelessAuthFace</a></dt>
+<dd><p>FTN8.1: Stateless AuthService Face</p>
+</dd>
+<dt><a href="#StatelessAuthService">StatelessAuthService</a></dt>
+<dd><p>Manage Service</p>
+</dd>
+<dt><a href="#StatelessManageFace">StatelessManageFace</a></dt>
+<dd><p>FTN8.1: Stateless Manage Face</p>
+</dd>
+<dt><a href="#StatelessManageService">StatelessManageService</a></dt>
+<dd><p>FTN8.1.: Stateless Manage Service</p>
 </dd>
 <dt><a href="#BaseFace">BaseFace</a></dt>
 <dd><p>Base Face with neutral common registration functionality</p>
@@ -66,7 +78,7 @@ Manage Face
 <a name="ManageService"></a>
 
 ## ManageService
-Manage Service
+FTN8: main Manage Service
 
 **Kind**: global class  
 <a name="ServiceApp"></a>
@@ -121,6 +133,30 @@ Shutdown of app and related instances
 | --- | --- | --- | --- |
 | [done] | <code>callable</code> | <code></code> | done callback |
 
+<a name="SatelessAuthFace"></a>
+
+## SatelessAuthFace
+FTN8.1: Stateless AuthService Face
+
+**Kind**: global class  
+<a name="StatelessAuthService"></a>
+
+## StatelessAuthService
+Manage Service
+
+**Kind**: global class  
+<a name="StatelessManageFace"></a>
+
+## StatelessManageFace
+FTN8.1: Stateless Manage Face
+
+**Kind**: global class  
+<a name="StatelessManageService"></a>
+
+## StatelessManageService
+FTN8.1.: Stateless Manage Service
+
+**Kind**: global class  
 <a name="BaseFace"></a>
 
 ## BaseFace

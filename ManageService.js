@@ -35,7 +35,7 @@ const SYM_SELECT_USER = Symbol( 'selectUser' );
 const SYM_SELECT_USER_INFO = Symbol( 'selectUserInfo' );
 
 /**
- * Manage Service
+ * FTN8: main Manage Service
  */
 class ManageService extends BaseService {
     static get IFACE_IMPL() {
@@ -158,6 +158,7 @@ class ManageService extends BaseService {
     }
 
     getUserInfo( as, reqinfo ) {
+        // TODO: caching
         this._userInfoCommon( as, reqinfo );
 
         as.add( ( as, r ) => {
@@ -197,7 +198,7 @@ class ManageService extends BaseService {
     }
 
     /**
-     * Register futoin.secvault.keys interface with Executor
+     * Register futoin.auth.manage interface with Executor
      * @alias ManageService.register
      * @param {AsyncSteps} as - steps interface
      * @param {Executor} executor - executor instance

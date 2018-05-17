@@ -45,11 +45,32 @@
         "KMAC256"
       ]
     },
-    "StatelessSecret": {
+    "Password": {
       "type": "string",
       "minlen": 8,
       "maxlen": 32
     },
+    "PasswordLength": {
+      "type": "integer",
+      "min": 8,
+      "max": 32
+    },
+    "KeyBits": {
+      "type": "enum",
+      "items": [
+        256,
+        512
+      ]
+    },
+    "MACKey": {
+      "type": "Base64",
+      "minlen": 42,
+      "maxlen": 87
+    },
+    "StatelessSecret": [
+      "Password",
+      "MACKey"
+    ],
     "MACValue": {
       "type": "Base64",
       "minlen": 1,

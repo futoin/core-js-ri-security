@@ -22,6 +22,8 @@ module.exports = function( { it, vars } ) {
             master_auth: false,
             master_auto_reg: false,
             auth_service: false,
+            password_len: 16,
+            key_bits: 256,
         } ) );
     } ) );
 
@@ -55,6 +57,8 @@ module.exports = function( { it, vars } ) {
             master_auth: true,
             master_auto_reg: true,
             auth_service: true,
+            password_len: 16,
+            key_bits: 256,
         } ) );
     } ) );
 

@@ -38,14 +38,19 @@ const DBPushService = require( 'futoin-eventstream/DBPushService' );
 
 const {
     MANAGE_FACE,
-    KEY_FACE,
-    DATA_FACE,
+    STLS_MANAGE_FACE,
+    SVKEY_FACE,
+    SVDATA_FACE,
     EVTGEN_FACE,
     EVTPUSH_FACE,
     scopeTemplate,
 } = require( './lib/main' );
+
 const ManageFace = require( './ManageFace' );
 const ManageService = require( './ManageService' );
+
+const StatelessManageFace = require( './StatelessManageFace' );
+const StatelessManageService = require( './StatelessManageService' );
 
 /**
  * All-in-one AuthService initialization
@@ -118,6 +123,7 @@ class ServiceApp {
         privateExecutor.on( 'notExpected', notExpectedHandler );
         publicExecutor.on( 'notExpected', notExpectedHandler );
 
+        this._scope = scope;
         this._ccm = ccm;
         this._private_executor = privateExecutor;
         this._public_executor = publicExecutor;
@@ -139,20 +145,23 @@ class ServiceApp {
             // SecVault
             const sv_storage = new SQLStorage( ccm );
             KeyService.register( as, privateExecutor, sv_storage, options.secVaultOptions );
-            KeyFace.register( as, ccm, KEY_FACE, privateExecutor );
+            KeyFace.register( as, ccm, SVKEY_FACE, privateExecutor );
             DataService.register( as, privateExecutor, sv_storage, options.secVaultOptions );
-            DataFace.register( as, ccm, DATA_FACE, privateExecutor );
+            DataFace.register( as, ccm, SVDATA_FACE, privateExecutor );
 
             // Init of FutoIn Security services
             ManageService.register( as, privateExecutor, scope );
             ManageFace.register( as, ccm, MANAGE_FACE, privateExecutor );
+
+            StatelessManageService.register( as, privateExecutor, scope );
+            StatelessManageFace.register( as, ccm, STLS_MANAGE_FACE, privateExecutor );
         } );
 
         as.add( ( as ) => {
             ccm.iface( MANAGE_FACE ).call( as, 'setup', config );
 
             if ( storagePassword ) {
-                ccm.iface( KEY_FACE ).unlock( as, Buffer.from( storagePassword, 'hex' ) );
+                ccm.iface( SVKEY_FACE ).unlock( as, Buffer.from( storagePassword, 'hex' ) );
             }
         } );
     }

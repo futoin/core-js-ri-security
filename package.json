@@ -45,8 +45,8 @@
     "futoin-database": "^1.7.3",
     "futoin-eventstream": "^0.9.98",
     "futoin-executor": "^1.8.7",
-    "futoin-invoker": "^1.8.6",
-    "futoin-secvault": "^0.9.4",
+    "futoin-invoker": "^1.8.7",
+    "futoin-secvault": "^0.9.5",
     "grunt": "^1.0.2",
     "grunt-eslint": "^20.1.0",
     "grunt-jsdoc-to-markdown": "^4.0.0",
@@ -60,8 +60,8 @@
     "futoin-database": "^1.7.3",
     "futoin-eventstream": "^0.9.98",
     "futoin-executor": "^1.8.7",
-    "futoin-invoker": "^1.8.5",
-    "futoin-secvault": "^0.9.4"
+    "futoin-invoker": "^1.8.7",
+    "futoin-secvault": "^0.9.5"
   },
   "dependencies": {
     "futoin-uuid": "^1.0.0",
