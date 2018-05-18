@@ -40,6 +40,9 @@ const {
     MANAGE_FACE,
     STLS_AUTH_FACE,
     STLS_MANAGE_FACE,
+    MASTER_AUTH_FACE,
+    MASTER_AUTOREG_FACE,
+    MASTER_MANAGE_FACE,
     SVKEY_FACE,
     SVDATA_FACE,
     EVTGEN_FACE,
@@ -54,6 +57,13 @@ const StatelessManageFace = require( './StatelessManageFace' );
 const StatelessManageService = require( './StatelessManageService' );
 const StatelessAuthFace = require( './StatelessAuthFace' );
 const StatelessAuthService = require( './StatelessAuthService' );
+
+const MasterManageFace = require( './MasterManageFace' );
+const MasterManageService = require( './MasterManageService' );
+const MasterAuthFace = require( './MasterAuthFace' );
+const MasterAuthService = require( './MasterAuthService' );
+const MasterAutoregFace = require( './MasterAutoregFace' );
+const MasterAutoregService = require( './MasterAutoregService' );
 
 /**
  * All-in-one AuthService initialization
@@ -158,8 +168,15 @@ class ServiceApp {
 
             StatelessManageService.register( as, privateExecutor, scope );
             StatelessManageFace.register( as, ccm, STLS_MANAGE_FACE, privateExecutor );
-            StatelessAuthService.register( as, privateExecutor, scope );
-            StatelessAuthFace.register( as, ccm, STLS_AUTH_FACE, privateExecutor );
+            StatelessAuthService.register( as, publicExecutor, scope );
+            StatelessAuthFace.register( as, ccm, STLS_AUTH_FACE, publicExecutor );
+
+            MasterManageService.register( as, privateExecutor, scope );
+            MasterManageFace.register( as, ccm, MASTER_MANAGE_FACE, privateExecutor );
+            MasterAuthService.register( as, publicExecutor, scope );
+            MasterAuthFace.register( as, ccm, MASTER_AUTH_FACE, publicExecutor );
+            MasterAutoregService.register( as, publicExecutor, scope );
+            MasterAutoregFace.register( as, ccm, MASTER_AUTOREG_FACE, publicExecutor );
         } );
 
         as.add( ( as ) => {

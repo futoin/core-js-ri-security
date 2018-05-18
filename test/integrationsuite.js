@@ -50,4 +50,8 @@ module.exports = function( describe, it, databaseConfig ) {
     describe( 'Stateless', function() {
         require( './stateless_suite' )( { describe, it, vars } );
     } );
+
+    describe( 'Master', function() {
+        require( './master_suite' )( { describe, it, vars } );
+    } );
 };

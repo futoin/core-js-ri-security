@@ -41,7 +41,6 @@ class StatelessAuthService extends BaseService {
         return StatelessAuthFace;
     }
 
-
     _checkFingerprints( as, _ccm, _user, _client ) {
         // TODO:
     }

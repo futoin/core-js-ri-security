@@ -46,6 +46,24 @@ $ yarn add futoin-security --save
 <dt><a href="#ManageService">ManageService</a></dt>
 <dd><p>FTN8: main Manage Service</p>
 </dd>
+<dt><a href="#MasterAutoregFace">MasterAutoregFace</a></dt>
+<dd><p>FTN8.2: Master Auth Face</p>
+</dd>
+<dt><a href="#MasterAuthService">MasterAuthService</a></dt>
+<dd><p>FTN8.2: Master Auth Service</p>
+</dd>
+<dt><a href="#MasterAutoregFace">MasterAutoregFace</a></dt>
+<dd><p>FTN8.2: Master Auth Auto-registration Face</p>
+</dd>
+<dt><a href="#MasterAutoregService">MasterAutoregService</a></dt>
+<dd><p>FTN8.2: Master Auth Auto-registration Service</p>
+</dd>
+<dt><a href="#MasterManageFace">MasterManageFace</a></dt>
+<dd><p>FTN8.2: Master Auth Manage Face</p>
+</dd>
+<dt><a href="#MasterManageService">MasterManageService</a></dt>
+<dd><p>FTN8.2: Master Auth Manage Service</p>
+</dd>
 <dt><a href="#ServiceApp">ServiceApp</a></dt>
 <dd><p>All-in-one AuthService initialization</p>
 </dd>
@@ -79,6 +97,42 @@ Manage Face
 
 ## ManageService
 FTN8: main Manage Service
+
+**Kind**: global class  
+<a name="MasterAutoregFace"></a>
+
+## MasterAutoregFace
+FTN8.2: Master Auth Face
+
+**Kind**: global class  
+<a name="MasterAuthService"></a>
+
+## MasterAuthService
+FTN8.2: Master Auth Service
+
+**Kind**: global class  
+<a name="MasterAutoregFace"></a>
+
+## MasterAutoregFace
+FTN8.2: Master Auth Auto-registration Face
+
+**Kind**: global class  
+<a name="MasterAutoregService"></a>
+
+## MasterAutoregService
+FTN8.2: Master Auth Auto-registration Service
+
+**Kind**: global class  
+<a name="MasterManageFace"></a>
+
+## MasterManageFace
+FTN8.2: Master Auth Manage Face
+
+**Kind**: global class  
+<a name="MasterManageService"></a>
+
+## MasterManageService
+FTN8.2: Master Auth Manage Service
 
 **Kind**: global class  
 <a name="ServiceApp"></a>

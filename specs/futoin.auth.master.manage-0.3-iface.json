@@ -9,7 +9,7 @@
   "funcs": {
     "getNewPlainSecret": {
       "params": {
-        "user": "LocalUser"
+        "user": "LocalUserID"
       },
       "result": {
         "id": "MasterSecretID",
@@ -18,7 +18,8 @@
       "throws": [
         "UnknownUser",
         "NotSet"
-      ]
+      ],
+      "seclvl": "System"
     }
   },
   "requires": [

@@ -39,7 +39,8 @@
           "default": 256
         }
       },
-      "result": "boolean"
+      "result": "boolean",
+      "seclvl": "System"
     },
     "genConfig": {
       "result": {
@@ -51,21 +52,24 @@
         "auth_service": "boolean",
         "password_len": "PasswordLength",
         "key_bits": "KeyBits"
-      }
+      },
+      "seclvl": "System"
     },
     "ensureUser": {
       "params": {
         "user": "LocalUser",
         "domain": "GlobalService"
       },
-      "result": "LocalUserID"
+      "result": "LocalUserID",
+      "seclvl": "System"
     },
     "ensureService": {
       "params": {
         "hostname": "LocalService",
         "domain": "GlobalService"
       },
-      "result": "LocalUserID"
+      "result": "LocalUserID",
+      "seclvl": "System"
     },
     "getUserInfo": {
       "params": {
@@ -82,7 +86,8 @@
       },
       "throws": [
         "UnknownUser"
-      ]
+      ],
+      "seclvl": "System"
     },
     "setUserInfo": {
       "params": {
@@ -92,7 +97,8 @@
       "result": "boolean",
       "throws": [
         "UnknownUser"
-      ]
+      ],
+      "seclvl": "System"
     }
   },
   "requires": [
