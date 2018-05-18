@@ -106,6 +106,10 @@ class StatelessAuthService extends BaseService {
     }
 
     checkClear( as, reqinfo ) {
+        if ( !this._scope.config.clear_auth ) {
+            as.error( Errors.SecurityError, 'Clear text auth is disabled' );
+        }
+
         const { client, sec : { user, secret } } = reqinfo.params();
         this._checkCommon( as, {
             reqinfo,
@@ -119,6 +123,10 @@ class StatelessAuthService extends BaseService {
     }
 
     checkMAC( as, reqinfo ) {
+        if ( !this._scope.config.mac_auth ) {
+            as.error( Errors.SecurityError, 'Stateless MAC auth is disabled' );
+        }
+
         const { base, client, sec : { user, algo, sig } } = reqinfo.params();
         const { hash } = macutils.parseMode( algo );
         this._checkCommon( as, {

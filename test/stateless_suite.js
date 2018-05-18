@@ -376,5 +376,46 @@ module.exports = function( { describe, it, vars } ) {
                 as.success();
             }
         ) );
+
+        it ( 'should detect if clear auth is disabled', $as_test(
+            ( as ) => {
+                vars.app._scope.config.clear_auth = false;
+                stls_auth.checkClear(
+                    as,
+                    { user : '1234567890123456789012', secret: '123467890' },
+                    {}
+                );
+            },
+            ( as, err ) => {
+                vars.app._scope.config.clear_auth = true;
+                expect( as.state.error_info )
+                    .to.equal( 'Clear text auth is disabled' );
+                expect( err ).to.equal( 'SecurityError' );
+                as.success();
+            }
+        ) );
+
+        it ( 'should detect if MAC auth is disabled', $as_test(
+            ( as ) => {
+                vars.app._scope.config.mac_auth = false;
+                stls_auth.checkMAC(
+                    as,
+                    Buffer.from( 'abcdefghijklmnopqrstuvwxyz' ),
+                    {
+                        user : '1234567890123456789012',
+                        algo : 'HS256',
+                        sig : 'abcdefghijklmnopqrstuvwxyz',
+                    },
+                    {}
+                );
+            },
+            ( as, err ) => {
+                vars.app._scope.config.mac_auth = true;
+                expect( as.state.error_info )
+                    .to.equal( 'Stateless MAC auth is disabled' );
+                expect( err ).to.equal( 'SecurityError' );
+                as.success();
+            }
+        ) );
     } );
 };
