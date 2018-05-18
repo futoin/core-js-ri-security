@@ -76,13 +76,13 @@ class StatelessAuthService extends BaseService {
     }
 
 
-    _checkCommon( as, { reqinfo, for_mac, base, client, user, hash, sigbuf } ) {
+    _checkCommon( as, { reqinfo, for_mac, base, source, user, hash, sigbuf } ) {
         const ccm = reqinfo.ccm();
 
         this._checkUser( as, ccm, user );
         as.add(
             ( as, user_info ) => {
-                this._checkFingerprints( as, ccm, user, client );
+                this._checkFingerprints( as, ccm, user, source );
 
                 const svkeys = ccm.iface( SVKEY_FACE );
                 svkeys.extKeyInfo( as, this._keyName( reqinfo, user, for_mac ) );
@@ -110,12 +110,12 @@ class StatelessAuthService extends BaseService {
             as.error( Errors.SecurityError, 'Clear text auth is disabled' );
         }
 
-        const { client, sec : { user, secret } } = reqinfo.params();
+        const { source, sec : { user, secret } } = reqinfo.params();
         this._checkCommon( as, {
             reqinfo,
             for_mac: false,
             base: empty_buf,
-            client,
+            source,
             user,
             hash: 'NA',
             sigbuf: Buffer.from( secret, 'utf8' ),
@@ -127,13 +127,13 @@ class StatelessAuthService extends BaseService {
             as.error( Errors.SecurityError, 'Stateless MAC auth is disabled' );
         }
 
-        const { base, client, sec : { user, algo, sig } } = reqinfo.params();
+        const { base, source, sec : { user, algo, sig } } = reqinfo.params();
         const { hash } = macutils.parseMode( algo );
         this._checkCommon( as, {
             reqinfo,
             for_mac: true,
             base,
-            client,
+            source,
             user,
             hash,
             sigbuf: Buffer.from( sig, 'base64' ),
