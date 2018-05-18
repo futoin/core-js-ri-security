@@ -63,6 +63,9 @@ class ManageService extends BaseService {
                     domain2service[global_id] = local_id;
                 } );
             } );
+            as.add( ( as ) => {
+                scope.system_local_id = domain2service[config.domains[0]];
+            } );
         }
 
         as.add( ( as ) => {

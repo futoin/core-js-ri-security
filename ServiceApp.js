@@ -38,6 +38,7 @@ const DBPushService = require( 'futoin-eventstream/DBPushService' );
 
 const {
     MANAGE_FACE,
+    STLS_AUTH_FACE,
     STLS_MANAGE_FACE,
     SVKEY_FACE,
     SVDATA_FACE,
@@ -51,6 +52,8 @@ const ManageService = require( './ManageService' );
 
 const StatelessManageFace = require( './StatelessManageFace' );
 const StatelessManageService = require( './StatelessManageService' );
+const StatelessAuthFace = require( './StatelessAuthFace' );
+const StatelessAuthService = require( './StatelessAuthService' );
 
 /**
  * All-in-one AuthService initialization
@@ -155,6 +158,8 @@ class ServiceApp {
 
             StatelessManageService.register( as, privateExecutor, scope );
             StatelessManageFace.register( as, ccm, STLS_MANAGE_FACE, privateExecutor );
+            StatelessAuthService.register( as, privateExecutor, scope );
+            StatelessAuthFace.register( as, ccm, STLS_AUTH_FACE, privateExecutor );
         } );
 
         as.add( ( as ) => {

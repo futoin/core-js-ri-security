@@ -26,7 +26,7 @@ const BaseFace = require( './lib/BaseFace' );
  */
 class SatelessAuthFace extends BaseFace {
     static get IFACE_NAME() {
-        return 'futoin.stateless.auth';
+        return 'futoin.auth.stateless';
     }
 
     /**
