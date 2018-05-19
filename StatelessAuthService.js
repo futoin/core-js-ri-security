@@ -21,12 +21,11 @@
 
 const BaseService = require( './lib/BaseService' );
 const StatelessAuthFace = require( './StatelessAuthFace' );
-const macutils = require( './lib/macutils' );
+const secutil = require( './lib/util' );
 
 const Errors = require( 'futoin-asyncsteps/Errors' );
 
 const {
-    MANAGE_FACE,
     SVKEY_FACE,
     SVDATA_FACE,
 } = require( './lib/main' );
@@ -39,30 +38,6 @@ const empty_buf = Buffer.from( '' );
 class StatelessAuthService extends BaseService {
     static get IFACE_IMPL() {
         return StatelessAuthFace;
-    }
-
-    _checkFingerprints( as, _ccm, _user, _client ) {
-        // TODO:
-    }
-
-    _checkUser( as, ccm, user ) {
-        const manage = ccm.iface( MANAGE_FACE );
-        as.add(
-            ( as ) => manage.getUserInfo( as, user ),
-            ( as, err ) => {
-                if ( err === 'UnknownUser' ) {
-                    as.error( Errors.SecurityError, `Invalid user or password: ${user}` );
-                }
-            }
-        );
-
-        as.add( ( as, info ) => {
-            if ( !info.is_enabled ) {
-                as.error( Errors.SecurityError, `User is not enabled: ${user}` );
-            }
-
-            as.success( info );
-        } );
     }
 
     _keyName( reqinfo, user, for_mac ) {
@@ -78,11 +53,9 @@ class StatelessAuthService extends BaseService {
     _checkCommon( as, { reqinfo, for_mac, base, source, user, hash, sigbuf } ) {
         const ccm = reqinfo.ccm();
 
-        this._checkUser( as, ccm, user );
+        secutil.checkUser( as, ccm, user, source );
         as.add(
             ( as, user_info ) => {
-                this._checkFingerprints( as, ccm, user, source );
-
                 const svkeys = ccm.iface( SVKEY_FACE );
                 svkeys.extKeyInfo( as, this._keyName( reqinfo, user, for_mac ) );
 
@@ -127,7 +100,7 @@ class StatelessAuthService extends BaseService {
         }
 
         const { base, source, sec : { user, algo, sig } } = reqinfo.params();
-        const { hash } = macutils.parseMode( algo );
+        const { hash } = secutil.parseMACAlgo( algo );
         this._checkCommon( as, {
             reqinfo,
             for_mac: true,
@@ -141,7 +114,7 @@ class StatelessAuthService extends BaseService {
 
     genMAC( as, reqinfo ) {
         const { base, reqsec : { user, algo } } = reqinfo.params();
-        const { hash } = macutils.parseMode( algo );
+        const { hash } = secutil.parseMACAlgo( algo );
         const ccm = reqinfo.ccm();
 
         const svkeys = ccm.iface( SVKEY_FACE );

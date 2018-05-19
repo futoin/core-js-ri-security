@@ -38,7 +38,9 @@ class MasterManageService extends BaseService {
     }
 
     getNewPlainSecret( as, reqinfo ) {
-        if ( !this._scope.config.master_auth ) {
+        const { config } = this._scope;
+
+        if ( !config.master_auth ) {
             as.error( Errors.SecurityError, 'Master auth is disabled' );
         }
 
@@ -47,35 +49,49 @@ class MasterManageService extends BaseService {
         const manage = ccm.iface( MANAGE_FACE );
         const evtgen = ccm.iface( EVTGEN_FACE );
         const svkey = ccm.iface( SVKEY_FACE );
-        const scope = 'main';
+        const scope = '';
 
         // Verify user
         manage.getUserInfo( as, user );
 
-        // Clear all user keys
-        svkey.listKeys( as, `${user}:MSTR:` );
-        as.add( ( as, keys ) => {
-            as.forEach( keys, ( as, _, key_id ) => {
-                evtgen.addEvent( as, 'MSTR_DEL', { user, key_id } );
-                svkey.wipeKey( as, key_id );
-            } );
-        } );
+        as.add( ( as, user_info ) => {
+            // Clear all user keys
+            svkey.listKeys( as, `${user}:MSTR:` );
+            as.add( ( as, keys ) => {
+                as.forEach( keys, ( as, _, key_id ) => {
+                    evtgen.addEvent( as, 'MSTR_DEL', { user, key_id } );
+                    svkey.wipeKey( as, key_id );
 
-        // Generate a single new master key
-        svkey.generateKey(
-            as,
-            `${user}:MSTR:${scope}:1`,
-            [ 'shared', 'derive' ],
-            'HMAC',
-            { bits : this._scope.config.key_bits }
-        );
-        as.add( ( as, key_id ) => {
-            evtgen.addEvent( as, 'MSTR_DEL', { user, key_id, scope } );
-            svkey.exposeKey( as, key_id );
-            as.add( ( as, key_data ) => {
-                reqinfo.result( {
-                    id: key_id,
-                    secret: key_data.toString( 'base64' ),
+                    // Remove related derived keys
+                    svkey.listKeys( as, `${key_id}:DRV:` );
+                    as.add( ( as, dkeys ) => {
+                        as.forEach( dkeys, ( as, _, dkey_id ) => {
+                            svkey.wipeKey( as, dkey_id );
+                        } );
+                    } );
+                } );
+            } );
+
+            // Generate a single new master key
+            svkey.generateKey(
+                as,
+                `${user}:MSTR:${scope}:1`,
+                [ 'shared', 'derive' ],
+                'HMAC',
+                {
+                    bits : config.key_bits,
+                    local_id : user_info.local_id,
+                    global_id : user_info.global_id,
+                }
+            );
+            as.add( ( as, key_id ) => {
+                evtgen.addEvent( as, 'MSTR_NEW', { user, key_id, scope } );
+                svkey.exposeKey( as, key_id );
+                as.add( ( as, key_data ) => {
+                    reqinfo.result( {
+                        id: key_id,
+                        secret: key_data.toString( 'base64' ),
+                    } );
                 } );
             } );
         } );

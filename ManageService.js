@@ -160,7 +160,7 @@ class ManageService extends BaseService {
 
     ensureService( as, reqinfo ) {
         const p = reqinfo.params();
-        const global_id = `${p.user}.${p.domain}`;
+        const global_id = `${p.hostname}.${p.domain}`;
         this._ensureCommon( as, global_id, reqinfo, true );
     }
 

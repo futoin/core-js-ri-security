@@ -49,10 +49,14 @@ module.exports = function( { describe, it, vars } ) {
             as.repeat( 3, ( as, i ) => {
                 svkey.generateKey(
                     as,
-                    `${service1_id}:MSTR:main:${i}`,
+                    `${service1_id}:MSTR::${i}`,
                     [ 'shared', 'derive' ],
                     'HMAC',
-                    { bits : 256 }
+                    {
+                        bits : 256,
+                        local_id : service1_id,
+                        global_id : 'mstrsvc1.example.com',
+                    }
                 );
                 svkey.generateKey(
                     as,
@@ -61,6 +65,20 @@ module.exports = function( { describe, it, vars } ) {
                     'HMAC',
                     { bits : 256 }
                 );
+                as.add( ( as, key_id ) => {
+                    svkey.deriveKey(
+                        as,
+                        `D:${key_id}:MAC`,
+                        [ 'encrypt', 'sign' ],
+                        'HMAC',
+                        256,
+                        key_id,
+                        'HKDF',
+                        'SHA-256',
+                        Buffer.from( 'MAC' ),
+                        {}
+                    );
+                } );
             } );
 
             // Check
