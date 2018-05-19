@@ -27,6 +27,7 @@ const MasterAuthFace = require( './MasterAuthFace' );
 const {
     EVTGEN_FACE,
     SVKEY_FACE,
+    SVDATA_FACE,
 } = require( './lib/main' );
 
 const secutil = require( './lib/util' );
@@ -46,9 +47,30 @@ class MasterAuthService extends BaseService {
         }
     }
 
-    _checkCommon( as, _reqinfo ) {
+    _checkCommon( as, reqinfo ) {
         this._checkMasterAuth( as );
         //---
+        const ccm = reqinfo.ccm();
+        const { config } = this._scope;
+        const reqinfo_info = reqinfo.info;
+
+        const global_id =
+            ( reqinfo_info[reqinfo.SECURITY_LEVEL] === 'System' )
+                ? config.domains[0]
+                : reqinfo.userInfo().global_id;
+        //---
+        const {
+            base,
+            sec : { msid, algo, kds, prm, sig },
+            source,
+        } = reqinfo.params();
+        //---
+        secutil.ensureDerivedKey( as, ccm, global_id, { msid, algo, kds, prm } );
+        as.add( ( as, { auth_info, dsid, hash } ) => {
+            secutil.checkUser( as, ccm, auth_info.local_id, source );
+            ccm.iface( SVDATA_FACE ).verify( as, dsid, base, sig, hash );
+            as.successStep( { auth_info } );
+        } );
     }
 
     checkMAC( as, reqinfo ) {
@@ -92,10 +114,21 @@ class MasterAuthService extends BaseService {
             const old_ext_id = key_info.ext_id;
             const user = key_info.params.local_id;
 
+            // Check if user is enabled
             secutil.checkUser( as, ccm, user );
 
-            // Clear all user keys except the current one
-            svkey.listKeys( as, `${user}:MSTR:` );
+            // Check if too many master keys
+            as.add( ( as, { ms_max } ) => {
+                svkey.listKeys( as, `${user}:MSTR:` );
+                as.add( ( as, keys ) => {
+                    if ( ( keys.length + 1 ) >= ( ms_max << 1 ) ) {
+                        as.error( 'SecurityError', 'Too many master keys' );
+                    }
+                } );
+            } );
+
+            // Clear all user scope keys except the current one
+            svkey.listKeys( as, `${user}:MSTR:${scope}:` );
             as.add( ( as, keys ) => {
                 as.forEach( keys, ( as, _, key_id ) => {
                     if ( key_id == msid ) {

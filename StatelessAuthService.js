@@ -100,7 +100,7 @@ class StatelessAuthService extends BaseService {
         }
 
         const { base, source, sec : { user, algo, sig } } = reqinfo.params();
-        const { hash } = secutil.parseMACAlgo( algo );
+        const { hash } = secutil.parseMACAlgo( as, algo );
         this._checkCommon( as, {
             reqinfo,
             for_mac: true,
@@ -114,7 +114,7 @@ class StatelessAuthService extends BaseService {
 
     genMAC( as, reqinfo ) {
         const { base, reqsec : { user, algo } } = reqinfo.params();
-        const { hash } = secutil.parseMACAlgo( algo );
+        const { hash } = secutil.parseMACAlgo( as, algo );
         const ccm = reqinfo.ccm();
 
         const svkeys = ccm.iface( SVKEY_FACE );

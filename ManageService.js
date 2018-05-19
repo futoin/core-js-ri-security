@@ -19,7 +19,6 @@
  * limitations under the License.
  */
 
-const _merge = require( 'lodash/merge' );
 const moment = require( 'moment' );
 
 const UUIDTool = require( 'futoin-uuid' );
@@ -46,7 +45,12 @@ class ManageService extends BaseService {
         const ccm = reqinfo.ccm();
         const scope = this._scope;
         const { config } = scope;
-        _merge( config, reqinfo.params() );
+
+        for ( let [ k, v ] of Object.entries( reqinfo.params() ) ) {
+            if ( v !== null ) {
+                config[k] = v;
+            }
+        }
 
         const domain2service = {};
 
@@ -176,6 +180,8 @@ class ManageService extends BaseService {
                     'is_enabled',
                     'is_local',
                     'is_service',
+                    'ms_max',
+                    'ds_max',
                     'created',
                     'updated',
                 ] );
@@ -198,9 +204,16 @@ class ManageService extends BaseService {
         this._userInfoCommon( as, reqinfo );
 
         as.add( ( as, r ) => {
+            const { config } = this._scope;
+
             r.is_enabled = ( r.is_enabled === 'Y' );
             r.is_local = ( r.is_local === 'Y' );
             r.is_service = ( r.is_service === 'Y' );
+            r.ms_max = r.ms_max ||
+                ( r.is_service
+                    ? config.def_service_ms_max
+                    : config.def_user_ms_max );
+            r.ds_max = r.ds_max || r.ms_max;
             r.created = moment.utc( r.created ).format();
             r.updated = moment.utc( r.updated ).format();
             reqinfo.result( r );
@@ -212,23 +225,50 @@ class ManageService extends BaseService {
 
         as.add( ( as, r ) => {
             const params = reqinfo.params();
-            const { local_id, is_enabled } = params;
-            const q_is_enabled = is_enabled ? 'Y' : 'N';
+            const { local_id, is_enabled, ms_max, ds_max } = params;
+            const { config } = this._scope;
 
-            if ( r.is_enabled !== q_is_enabled ) {
-                const ccm = reqinfo.ccm();
-                const db = ccm.db( 'ftnsec' );
-                const evt = ccm.iface( EVTGEN_FACE );
+            const ccm = reqinfo.ccm();
+            const db = ccm.db( 'ftnsec' );
+            const evt = ccm.iface( EVTGEN_FACE );
 
-                const xfer = db.newXfer();
-                xfer.update( DB_USERS_TABLE )
-                    .set( 'is_enabled', q_is_enabled )
-                    .set( 'updated', db.helpers().now() )
-                    .where( 'local_id', local_id );
-                evt.addXferEvent( xfer, 'USR_MOD', params );
-                xfer.execute( as );
+            //---
+            const xfer = db.newXfer();
+            const uq = xfer.update( DB_USERS_TABLE )
+                .set( 'updated', db.helpers().now() )
+                .where( 'local_id', local_id );
+            const changes = {};
+
+            if ( is_enabled !== null ) {
+                changes.is_enabled = is_enabled ? 'Y' : 'N';
             }
 
+            if ( ms_max !== null ) {
+                if ( ( ( r.is_service === 'Y' ) &&
+                       ( ms_max === config.def_service_ms_max ) ) ||
+                     ( ( r.is_service === 'N' ) &&
+                       ( ms_max === config.def_user_ms_max ) )
+                ) {
+                    changes.ms_max = null;
+                } else {
+                    changes.ms_max = ms_max;
+                }
+            }
+
+            if ( ds_max !== null ) {
+                if ( ds_max === ms_max ) {
+                    changes.ds_max = null;
+                } else {
+                    changes.ds_max = ds_max;
+                }
+            }
+
+            uq.set( changes );
+
+            evt.addXferEvent( xfer, 'USR_MOD',
+                Object.assign( { local_id }, changes ) );
+            xfer.execute( as );
+            //---
             as.add( ( as ) => reqinfo.result( true ) );
         } );
     }

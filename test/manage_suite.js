@@ -24,6 +24,8 @@ module.exports = function( { it, vars } ) {
             auth_service: false,
             password_len: 16,
             key_bits: 256,
+            def_service_ms_max: 3,
+            def_user_ms_max: 0,
         } ) );
     } ) );
 
@@ -59,6 +61,8 @@ module.exports = function( { it, vars } ) {
             auth_service: true,
             password_len: 16,
             key_bits: 256,
+            def_service_ms_max: 3,
+            def_user_ms_max: 0,
         } ) );
     } ) );
 
@@ -118,6 +122,8 @@ module.exports = function( { it, vars } ) {
                 is_local: true,
                 is_service: false,
                 is_enabled: true,
+                ms_max: 0,
+                ds_max: 0,
                 created : res.created,
                 updated : res.updated,
             } ) );
@@ -132,6 +138,42 @@ module.exports = function( { it, vars } ) {
                 is_local: true,
                 is_service: false,
                 is_enabled: false,
+                ms_max: 0,
+                ds_max: 0,
+                created : res.created,
+                updated : res.updated,
+            } ) );
+
+            // ms_max / ds_max set
+            mf.call( as, 'setUserInfo', { local_id, ms_max : 30, ds_max: 40 } );
+            as.add( ( as, res ) => expect( res ).to.be.true );
+
+            mf.getUserInfo( as, local_id );
+            as.add( ( as, res ) => expect( res ).eql( {
+                local_id,
+                global_id: 'user2@example.org',
+                is_local: true,
+                is_service: false,
+                is_enabled: false,
+                ms_max: 30,
+                ds_max: 40,
+                created : res.created,
+                updated : res.updated,
+            } ) );
+
+            // ms_max / ds_max default
+            mf.call( as, 'setUserInfo', { local_id, ms_max : 0, ds_max: 0 } );
+            as.add( ( as, res ) => expect( res ).to.be.true );
+
+            mf.getUserInfo( as, local_id );
+            as.add( ( as, res ) => expect( res ).eql( {
+                local_id,
+                global_id: 'user2@example.org',
+                is_local: true,
+                is_service: false,
+                is_enabled: false,
+                ms_max: 0,
+                ds_max: 0,
                 created : res.created,
                 updated : res.updated,
             } ) );

@@ -9,6 +9,8 @@ CREATE TABLE sec_users (
     "is_local" ftnsec.enabled_enum NOT NULL,
     "is_service" ftnsec.enabled_enum NOT NULL,
     "is_enabled" ftnsec.enabled_enum NOT NULL,
+    "ms_max" SMALLINT,
+    "ds_max" SMALLINT,
     "created" TIMESTAMP NOT NULL,
     "updated" TIMESTAMP NOT NULL
 );

@@ -5,6 +5,8 @@ CREATE TABLE sec_users (
     "is_local" CHARACTER(1) NOT NULL,
     "is_service" CHARACTER(1) NOT NULL,
     "is_enabled" CHARACTER(1) NOT NULL,
+    "ms_max" SMALLINT,
+    "ds_max" SMALLINT,
     "created" TIMESTAMP NOT NULL,
     "updated" TIMESTAMP NOT NULL
 );

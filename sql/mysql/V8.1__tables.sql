@@ -6,6 +6,8 @@ CREATE TABLE sec_users (
     `is_local` ENUM('N', 'Y') NOT NULL,
     `is_service` ENUM('N', 'Y') NOT NULL,
     `is_enabled` ENUM('N', 'Y') NOT NULL,
+    `ms_max` SMALLINT,
+    `ds_max` SMALLINT,
     `created` DATETIME NOT NULL,
     `updated` DATETIME NOT NULL
 ) ENGINE=InnoDB;

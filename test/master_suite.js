@@ -68,7 +68,7 @@ module.exports = function( { describe, it, vars } ) {
                 as.add( ( as, key_id ) => {
                     svkey.deriveKey(
                         as,
-                        `D:${key_id}:MAC`,
+                        `${key_id}:DRV:HKDF256:HMAC:example.com:MAC:20180101`,
                         [ 'encrypt', 'sign' ],
                         'HMAC',
                         256,
