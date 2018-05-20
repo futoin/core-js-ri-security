@@ -41,11 +41,11 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "eslint": "^4.19.1",
-    "futoin-asyncsteps": "^1.11.3",
+    "futoin-asyncsteps": "^1.11.4",
     "futoin-database": "^1.7.3",
     "futoin-eventstream": "^0.9.98",
-    "futoin-executor": "^1.8.7",
-    "futoin-invoker": "^1.8.7",
+    "futoin-executor": "^1.8.8",
+    "futoin-invoker": "^1.8.8",
     "futoin-secvault": "^0.9.6",
     "grunt": "^1.0.2",
     "grunt-eslint": "^20.1.0",
@@ -53,14 +53,14 @@
     "grunt-mocha-istanbul": "^5.0.2",
     "grunt-text-replace": "^0.4.0",
     "istanbul": "^0.4.5",
-    "mocha": "^5.1.1"
+    "mocha": "^5.2.0"
   },
   "peerDependencies": {
-    "futoin-asyncsteps": "^1.11.3",
+    "futoin-asyncsteps": "^1.11.4",
     "futoin-database": "^1.7.3",
     "futoin-eventstream": "^0.9.98",
-    "futoin-executor": "^1.8.7",
-    "futoin-invoker": "^1.8.7",
+    "futoin-executor": "^1.8.8",
+    "futoin-invoker": "^1.8.8",
     "futoin-secvault": "^0.9.6"
   },
   "dependencies": {

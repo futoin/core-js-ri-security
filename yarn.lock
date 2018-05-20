@@ -467,11 +467,7 @@ command-line-usage@^4.1.0:
     table-layout "^0.4.2"
     typical "^2.6.1"
 
-commander@2.11.0:
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.11.0.tgz#157152fd1e7a6c8d98a5b715cf376df928004563"
-
-commander@^2.15.0:
+commander@2.15.1, commander@^2.15.0:
   version "2.15.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.15.1.tgz#df46e867d0fc2aec66a34662b406a9ccafff5b0f"
 
@@ -914,9 +910,9 @@ futoin-asyncevent@^1.0.0, futoin-asyncevent@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/futoin-asyncevent/-/futoin-asyncevent-1.0.1.tgz#77ae623a1d539778ae6c43d974f5fd7549a999f1"
 
-futoin-asyncsteps@^1.11.3:
-  version "1.11.3"
-  resolved "https://registry.yarnpkg.com/futoin-asyncsteps/-/futoin-asyncsteps-1.11.3.tgz#4b6c7590efe1bb4f6719b694d79454f382d3fcc7"
+futoin-asyncsteps@^1.11.4:
+  version "1.11.4"
+  resolved "https://registry.yarnpkg.com/futoin-asyncsteps/-/futoin-asyncsteps-1.11.4.tgz#671e7e73fca5adc13aee09d4c60eb43e4e5b7cc4"
   dependencies:
     performance-now "^2.1.0"
 
@@ -939,9 +935,9 @@ futoin-eventstream@^0.9.98:
   dependencies:
     futoin-asyncevent "^1.0.1"
 
-futoin-executor@^1.8.7:
-  version "1.8.7"
-  resolved "https://registry.yarnpkg.com/futoin-executor/-/futoin-executor-1.8.7.tgz#1af911527f39c5262fc347dce9922dc1109f2f4c"
+futoin-executor@^1.8.8:
+  version "1.8.8"
+  resolved "https://registry.yarnpkg.com/futoin-executor/-/futoin-executor-1.8.8.tgz#ae87a31ce64e46a98050c71828ac29aaa539390d"
   dependencies:
     cookie "^0.3.1"
     detect-node "^2.0.3"
@@ -958,9 +954,9 @@ futoin-hkdf@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/futoin-hkdf/-/futoin-hkdf-1.0.1.tgz#1df3ffe331039e3b8e09326962b0fa078092a7ee"
 
-futoin-invoker@^1.8.7:
-  version "1.8.7"
-  resolved "https://registry.yarnpkg.com/futoin-invoker/-/futoin-invoker-1.8.7.tgz#ed1050d6198084f4e45cb0f9f509517f3c4b76c0"
+futoin-invoker@^1.8.8:
+  version "1.8.8"
+  resolved "https://registry.yarnpkg.com/futoin-invoker/-/futoin-invoker-1.8.8.tgz#14cafbf21f952a0c54bf11040f66841ebb9f099d"
   dependencies:
     agentkeepalive "^3.4.1"
     detect-node "^2.0.3"
@@ -969,7 +965,7 @@ futoin-invoker@^1.8.7:
     lodash "^4.17.10"
     msgpack-lite "^0.1.26"
     performance-now "^2.1.0"
-    request "^2.85.0"
+    request "^2.86.0"
   optionalDependencies:
     borc "^2.0.3"
 
@@ -1076,9 +1072,9 @@ graceful-fs@^4.1.2, graceful-fs@^4.1.9:
   version "4.1.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.11.tgz#0e8bdfe4d1ddb8854d64e04ea7c00e2a026e5658"
 
-growl@1.10.3:
-  version "1.10.3"
-  resolved "https://registry.yarnpkg.com/growl/-/growl-1.10.3.tgz#1926ba90cf3edfe2adb4927f5880bc22c66c790f"
+growl@1.10.5:
+  version "1.10.5"
+  resolved "https://registry.yarnpkg.com/growl/-/growl-1.10.5.tgz#f2735dc2283674fa67478b10181059355c369e5e"
 
 grunt-cli@~1.2.0:
   version "1.2.0"
@@ -1204,10 +1200,6 @@ has-ansi@^2.0.0:
 has-flag@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/has-flag/-/has-flag-1.0.0.tgz#9d9e793165ce017a00f00418c43f942a7b1d11fa"
-
-has-flag@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/has-flag/-/has-flag-2.0.0.tgz#e8207af1cc7b30d446cc70b734b5e8be18f88d51"
 
 has-flag@^3.0.0:
   version "3.0.0"
@@ -1727,21 +1719,21 @@ mkdirp@0.5.1, mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.1, mkdirp@~0.5.1:
   dependencies:
     minimist "0.0.8"
 
-mocha@^5.1.1:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/mocha/-/mocha-5.1.1.tgz#b774c75609dac05eb48f4d9ba1d827b97fde8a7b"
+mocha@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/mocha/-/mocha-5.2.0.tgz#6d8ae508f59167f940f2b5b3c4a612ae50c90ae6"
   dependencies:
     browser-stdout "1.3.1"
-    commander "2.11.0"
+    commander "2.15.1"
     debug "3.1.0"
     diff "3.5.0"
     escape-string-regexp "1.0.5"
     glob "7.1.2"
-    growl "1.10.3"
+    growl "1.10.5"
     he "1.1.1"
     minimatch "3.0.4"
     mkdirp "0.5.1"
-    supports-color "4.4.0"
+    supports-color "5.4.0"
 
 moment@^2.20.1, moment@^2.22.1:
   version "2.22.1"
@@ -2179,7 +2171,7 @@ request@2.81.0:
     tunnel-agent "^0.6.0"
     uuid "^3.0.0"
 
-request@^2.85.0:
+request@^2.86.0:
   version "2.86.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.86.0.tgz#2b9497f449b0a32654c081a5cf426bbfb5bf5b69"
   dependencies:
@@ -2479,11 +2471,11 @@ strip-json-comments@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
 
-supports-color@4.4.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-4.4.0.tgz#883f7ddabc165142b2a61427f3352ded195d1a3e"
+supports-color@5.4.0, supports-color@^5.3.0:
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-5.4.0.tgz#1c6b337402c2137605efe19f10fec390f6faab54"
   dependencies:
-    has-flag "^2.0.0"
+    has-flag "^3.0.0"
 
 supports-color@^2.0.0:
   version "2.0.0"
@@ -2494,12 +2486,6 @@ supports-color@^3.1.0:
   resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-3.2.3.tgz#65ac0504b3954171d8a64946b2ae3cbb8a5f54f6"
   dependencies:
     has-flag "^1.0.0"
-
-supports-color@^5.3.0:
-  version "5.4.0"
-  resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-5.4.0.tgz#1c6b337402c2137605efe19f10fec390f6faab54"
-  dependencies:
-    has-flag "^3.0.0"
 
 table-layout@^0.4.2:
   version "0.4.3"
