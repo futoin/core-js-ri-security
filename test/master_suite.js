@@ -176,6 +176,10 @@ module.exports = function( { describe, it, vars } ) {
                         },
                         {}
                     );
+                    as.add( ( as, res ) => expect( res ).eql( {
+                        local_id : service1_id,
+                        global_id : 'mstrsvc1.example.com',
+                    } ) );
                     mstr_auth.checkMAC(
                         as,
                         base,
@@ -188,6 +192,10 @@ module.exports = function( { describe, it, vars } ) {
                         },
                         {}
                     );
+                    as.add( ( as, res ) => expect( res ).eql( {
+                        local_id : service1_id,
+                        global_id : 'mstrsvc1.example.com',
+                    } ) );
                 } );
             } ) );
 
@@ -418,6 +426,94 @@ module.exports = function( { describe, it, vars } ) {
         } );
 
         describe( 'exposeDerivedKey', function() {
+            it ( 'should work correctly', $as_test( ( as ) => {
+                const tests = {
+                    md5 : 'HMD5',
+                    sha256 : 'HS256',
+                    sha384 : 'HS384',
+                    sha512 : 'HS512',
+                };
+
+                as.forEach( tests, ( as, hf, algo ) => {
+                    const base = crypto.randomBytes( 250 );
+                    const sig256 = crypto.createHmac( hf, derived_key256 )
+                        .update( base ).digest()
+                        .toString( 'base64' );
+                    const sig512 = crypto.createHmac( hf, derived_key512 )
+                        .update( base ).digest()
+                        .toString( 'base64' );
+                    mstr_auth.exposeDerivedKey(
+                        as,
+                        base,
+                        {
+                            msid,
+                            algo,
+                            kds: 'HKDF256',
+                            prm,
+                            sig: sig256,
+                        },
+                        {}
+                    );
+                    as.add( ( as, res ) => expect( res ).eql( {
+                        auth: {
+                            local_id : service1_id,
+                            global_id : 'mstrsvc1.example.com',
+                        },
+                        prm: res.prm,
+                        etype: 'AES',
+                        emode: 'GCM',
+                        ekey: res.ekey,
+                    } ) );
+                    mstr_auth.exposeDerivedKey(
+                        as,
+                        base,
+                        {
+                            msid,
+                            algo,
+                            kds: 'HKDF512',
+                            prm,
+                            sig: sig512,
+                        },
+                        {}
+                    );
+                    as.add( ( as, res ) => expect( res ).eql( {
+                        auth: {
+                            local_id : service1_id,
+                            global_id : 'mstrsvc1.example.com',
+                        },
+                        prm: res.prm,
+                        etype: 'AES',
+                        emode: 'GCM',
+                        ekey: res.ekey,
+                    } ) );
+                } );
+            } ) );
+
+            it ( 'should detect invalid signature', $as_test(
+                ( as ) => {
+                    const base = crypto.randomBytes( 250 );
+                    const sig = crypto.createHmac( 'sha256', derived_key256 )
+                        .update( base.slice( 1 ) ).digest()
+                        .toString( 'base64' );
+                    mstr_auth.exposeDerivedKey(
+                        as,
+                        base,
+                        {
+                            msid,
+                            algo: 'HS256',
+                            kds: 'HKDF256',
+                            prm,
+                            sig,
+                        },
+                        {}
+                    );
+                },
+                ( as, err ) => {
+                    expect( err ).equal( 'SecurityError' );
+                    expect( as.state.error_info ).equal( 'Authentication failed' );
+                    as.success();
+                }
+            ) );
         } );
 
         describe( 'getNewEncryptedSecret', function() {

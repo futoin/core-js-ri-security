@@ -9,7 +9,7 @@
   "types": {
     "KDSParam": {
       "type": "string",
-      "regex": "^[a-zA-Z0-9._-]{1,32}$"
+      "regex": "^[a-zA-Z0-9._/+-]{1,32}$"
     },
     "MACSecField": {
       "type": "map",

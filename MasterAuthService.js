@@ -112,7 +112,7 @@ class MasterAuthService extends BaseService {
         const { macf, hash } = secutil.parseMACAlgo( as, algo );
         secutil.ensureDerivedKey(
             as, ccm, 'MAC',
-            { msid, type: macf, kds, salt: global_id, prm }
+            { msid, type: macf, kds, salt: global_id, prm, forbid_derive: true }
         );
         as.add( ( as, { dsid } ) => {
             ccm.iface( SVDATA_FACE ).sign( as, dsid, base, hash );
@@ -138,16 +138,17 @@ class MasterAuthService extends BaseService {
                     const emode = 'GCM';
 
                     secutil.encryptKey(
-                        as, ccm, dsid,
+                        as, ccm,
+                        { key_id: dsid, emode },
                         { msid, type: etype, kds, salt: global_id, prm: dsid }
                     );
                     as.add( ( as, ekey ) => {
                         reqinfo.result( {
-                            auth_info,
+                            auth: auth_info,
                             prm: dsid,
                             etype,
                             emode,
-                            ekey,
+                            ekey: ekey.toString( 'base64' ),
                         } );
                     } );
                 } );
