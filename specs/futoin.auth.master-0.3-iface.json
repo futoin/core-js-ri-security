@@ -7,6 +7,10 @@
     "futoin.auth.types:0.3"
   ],
   "types": {
+    "KDSParam": {
+      "type": "string",
+      "regex": "^[a-zA-Z0-9._-]{1,32}$"
+    },
     "MACSecField": {
       "type": "map",
       "fields": {
@@ -14,7 +18,7 @@
         "algo": "MACAlgo",
         "kds": "KeyDerivationStrategy",
         "prm": {
-          "type": "Base64",
+          "type": "KDSParam",
           "optional": true
         },
         "sig": "MACValue"
@@ -61,7 +65,7 @@
       },
       "result": {
         "auth": "AuthInfo",
-        "prm": "Base64",
+        "prm": "KDSParam",
         "etype": "CipherType",
         "emode": "CipherMode",
         "ekey": "EncryptedKey"

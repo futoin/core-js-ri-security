@@ -118,36 +118,36 @@ module.exports = function( { describe, it, vars } ) {
     } );
 
     describe( 'Auth', function() {
-        describe( 'checkMAC', function() {
-            let msid;
-            let raw_key;
-            let prm;
-            let derived_key256;
-            let derived_key512;
+        let msid;
+        let raw_key;
+        let prm;
+        let derived_key256;
+        let derived_key512;
 
-            before( $as_test( ( as ) => {
-                mstr_manage.getNewPlainSecret( as, service1_id );
-                as.add( ( as, { id, secret } ) => {
-                    msid = id;
-                    raw_key = Buffer.from( secret, 'base64' );
-                    prm = moment.utc().format( 'YYYYMMDD' );
-                    derived_key256 = hkdf( raw_key, 32, {
-                        salt: Buffer.from( `example.com:MAC` ),
-                        info: prm,
-                        hash: 'sha256',
-                    } );
-                    derived_key512 = hkdf( raw_key, 32, {
-                        salt: Buffer.from( `example.com:MAC` ),
-                        info: prm,
-                        hash: 'sha512',
-                    } );
-
-                    // just in case
-                    expect( derived_key256.toString( 'base64' ) )
-                        .not.to.equal( derived_key512.toString( 'base64' ) );
+        before( $as_test( ( as ) => {
+            mstr_manage.getNewPlainSecret( as, service1_id );
+            as.add( ( as, { id, secret } ) => {
+                msid = id;
+                raw_key = Buffer.from( secret, 'base64' );
+                prm = moment.utc().format( 'YYYYMMDD' );
+                derived_key256 = hkdf( raw_key, 32, {
+                    salt: Buffer.from( `example.com:MAC` ),
+                    info: prm,
+                    hash: 'sha256',
                 } );
-            } ) );
+                derived_key512 = hkdf( raw_key, 32, {
+                    salt: Buffer.from( `example.com:MAC` ),
+                    info: prm,
+                    hash: 'sha512',
+                } );
 
+                // just in case
+                expect( derived_key256.toString( 'base64' ) )
+                    .not.to.equal( derived_key512.toString( 'base64' ) );
+            } );
+        } ) );
+
+        describe( 'checkMAC', function() {
             it ( 'should work correctly', $as_test( ( as ) => {
                 const tests = {
                     md5 : 'HMD5',
@@ -169,7 +169,7 @@ module.exports = function( { describe, it, vars } ) {
                         base,
                         {
                             msid,
-                            algo: algo,
+                            algo,
                             kds: 'HKDF256',
                             prm,
                             sig: sig256,
@@ -181,7 +181,7 @@ module.exports = function( { describe, it, vars } ) {
                         base,
                         {
                             msid,
-                            algo: algo,
+                            algo,
                             kds: 'HKDF512',
                             prm,
                             sig: sig512,
@@ -352,6 +352,69 @@ module.exports = function( { describe, it, vars } ) {
         } );
 
         describe( 'genMAC', function() {
+            it ( 'should work correctly', $as_test( ( as ) => {
+                const tests = {
+                    md5 : 'HMD5',
+                    sha256 : 'HS256',
+                    sha384 : 'HS384',
+                    sha512 : 'HS512',
+                };
+
+                as.forEach( tests, ( as, hf, algo ) => {
+                    const base = crypto.randomBytes( 250 );
+
+                    // ---
+                    const sig256 = crypto.createHmac( hf, derived_key256 )
+                        .update( base ).digest()
+                        .toString( 'base64' );
+                    mstr_auth.genMAC(
+                        as,
+                        base,
+                        {
+                            msid,
+                            algo,
+                            kds: 'HKDF256',
+                            prm,
+                            sig: 'X',
+                        }
+
+                    );
+                    as.add( ( as, res ) => {
+                        expect( res ).to.eql( {
+                            msid,
+                            algo,
+                            kds: 'HKDF256',
+                            prm,
+                            sig: sig256,
+                        } );
+                    } );
+
+                    // ---
+                    const sig512 = crypto.createHmac( hf, derived_key512 )
+                        .update( base ).digest()
+                        .toString( 'base64' );
+                    mstr_auth.genMAC(
+                        as,
+                        base,
+                        {
+                            msid,
+                            algo,
+                            kds: 'HKDF512',
+                            prm,
+                            sig: 'X',
+                        }
+                    );
+                    as.add( ( as, res ) => {
+                        expect( res ).to.eql( {
+                            msid,
+                            algo,
+                            kds: 'HKDF512',
+                            prm,
+                            sig: sig512,
+                        } );
+                    } );
+                } );
+            } ) );
         } );
 
         describe( 'exposeDerivedKey', function() {

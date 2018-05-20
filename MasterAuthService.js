@@ -94,7 +94,38 @@ class MasterAuthService extends BaseService {
         );
     }
 
-    genMAC( as, _reqinfo ) {
+    genMAC( as, reqinfo ) {
+        const ccm = reqinfo.ccm();
+        const { config } = this._scope;
+        const reqinfo_info = reqinfo.info;
+
+        const global_id =
+            ( reqinfo_info.SECURITY_LEVEL === 'System' )
+                ? config.domains[0]
+                : reqinfo_info.USER_INFO.global_id;
+        //---
+        const {
+            base,
+            reqsec : { msid, algo, kds, prm },
+        } = reqinfo.params();
+        //---
+        const { macf, hash } = secutil.parseMACAlgo( as, algo );
+        secutil.ensureDerivedKey(
+            as, ccm, 'MAC',
+            { msid, type: macf, kds, salt: global_id, prm }
+        );
+        as.add( ( as, { dsid } ) => {
+            ccm.iface( SVDATA_FACE ).sign( as, dsid, base, hash );
+            as.add( ( as, sig ) => {
+                reqinfo.result( {
+                    msid,
+                    algo,
+                    kds,
+                    prm,
+                    sig: sig.toString( 'base64' ),
+                } );
+            } );
+        } );
     }
 
     exposeDerivedKey( as, reqinfo ) {
