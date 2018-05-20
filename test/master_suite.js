@@ -4,6 +4,7 @@ const expect = require( 'chai' ).expect;
 const crypto = require( 'crypto' );
 const $as_test = require( 'futoin-asyncsteps/testcase' );
 const {
+    FTN8_VERSION,
     SVKEY_FACE,
     MANAGE_FACE,
     MASTER_AUTH_FACE,
@@ -514,9 +515,116 @@ module.exports = function( { describe, it, vars } ) {
                     as.success();
                 }
             ) );
+
+            it ( 'should detect if master auth is disabled', $as_test(
+                ( as ) => {
+                    vars.app._scope.config.master_auth = false;
+                    const base = crypto.randomBytes( 250 );
+                    const sig = crypto.createHmac( 'sha256', derived_key256 )
+                        .update( base ).digest()
+                        .toString( 'base64' );
+                    mstr_auth.exposeDerivedKey(
+                        as,
+                        base,
+                        {
+                            msid,
+                            algo: 'HS256',
+                            kds: 'HKDF256',
+                            prm,
+                            sig,
+                        },
+                        {}
+                    );
+                },
+                ( as, err ) => {
+                    vars.app._scope.config.master_auth = true;
+                    expect( as.state.error_info )
+                        .to.equal( 'Master auth is disabled' );
+                    expect( err ).to.equal( 'SecurityError' );
+                    as.success();
+                }
+            ) );
         } );
 
         describe( 'getNewEncryptedSecret', function() {
+            let rsa_key_id;
+            let rsa_pubkey;
+
+            before( $as_test( ( as ) => {
+                const svkey = ccm.iface( SVKEY_FACE );
+                svkey.generateKey(
+                    as,
+                    `TEST-RSA-EXCHANGE`,
+                    [ 'encrypt', 'temp' ],
+                    'RSA',
+                    2048
+                );
+                as.add( ( as, id ) => {
+                    rsa_key_id = id;
+
+                    svkey.publicKey( as, id );
+                    as.add( ( as, { data } ) => {
+                        rsa_pubkey = data.toString( 'base64' );
+                    } );
+                } );
+            } ) );
+
+            /*
+            it ( 'should work correctly with RSA', $as_test( (as) => as.repeat( 3, (as, i ) => {
+                const msg = {
+                    f : `futoin.auth.master:${FTN8_VERSION}:getNewEncryptedSecret`,
+                    p : {
+                        type : 'RSAE-2048',
+                        pubkey : rsa_pubkey,
+                        scope : 'test',
+                    },
+                };
+                const base = [
+                    `f:futoin.auth.master:${FTN8_VERSION}:getNewEncryptedSecret;`,
+                    `p:type:${msg.p.type};pubkey:${msg.p.pubkey};scope:${msg.p.scope};;`
+                ].join('');
+                const sig = crypto.createHmac( 'sha256', derived_key256 )
+                    .update( base ).digest()
+                    .toString( 'base64' );
+                msg.sec = '-mmac';
+            } ) );
+            */
+
+            it ( 'should detect if master auth is disabled', $as_test(
+                ( as ) => {
+                    vars.app._scope.config.master_auth = false;
+                    mstr_auth.getNewEncryptedSecret(
+                        as,
+                        'RSAE-2048',
+                        rsa_pubkey,
+                        'test.example.com'
+                    );
+                },
+                ( as, err ) => {
+                    vars.app._scope.config.master_auth = true;
+                    expect( as.state.error_info )
+                        .to.equal( 'Master auth is disabled' );
+                    expect( err ).to.equal( 'SecurityError' );
+                    as.success();
+                }
+            ) );
+
+            it ( 'should forbid to be used by AuthService itself', $as_test(
+                ( as ) => {
+                    mstr_auth.getNewEncryptedSecret(
+                        as,
+                        'RSAE-2048',
+                        rsa_pubkey,
+                        'test.example.com'
+                    );
+                },
+                ( as, err ) => {
+                    expect( as.state.error_info )
+                        .to.equal( 'Can not be used by AuthService itself' );
+                    expect( err ).to.equal( 'SecurityError' );
+                    as.success();
+                }
+            ) );
         } );
     } );
 

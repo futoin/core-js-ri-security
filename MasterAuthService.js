@@ -173,7 +173,7 @@ class MasterAuthService extends BaseService {
         const { msid } = reqinfo.info.RAW_REQUEST.sec || {};
 
         if ( !msid ) {
-            as.error( Errors.InvokerError,
+            as.error( Errors.SecurityError,
                 'Can not be used by AuthService itself' );
         }
         //---
@@ -196,7 +196,7 @@ class MasterAuthService extends BaseService {
                 svkey.listKeys( as, `${user}:MSTR:` );
                 as.add( ( as, keys ) => {
                     if ( ( keys.length + 1 ) >= ( ms_max << 1 ) ) {
-                        as.error( 'SecurityError', 'Too many master keys' );
+                        as.error( Errors.SecurityError, 'Too many master keys' );
                     }
                 } );
             } );
