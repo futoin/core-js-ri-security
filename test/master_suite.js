@@ -10,6 +10,8 @@ const {
     MASTER_AUTOREG_FACE,
     MASTER_MANAGE_FACE,
 } = require( '../lib/main' );
+const hkdf = require( 'futoin-hkdf' );
+const moment = require( 'moment' );
 
 module.exports = function( { describe, it, vars } ) {
     let ccm;
@@ -116,6 +118,247 @@ module.exports = function( { describe, it, vars } ) {
     } );
 
     describe( 'Auth', function() {
+        describe( 'checkMAC', function() {
+            let msid;
+            let raw_key;
+            let prm;
+            let derived_key256;
+            let derived_key512;
+
+            before( $as_test( ( as ) => {
+                mstr_manage.getNewPlainSecret( as, service1_id );
+                as.add( ( as, { id, secret } ) => {
+                    msid = id;
+                    raw_key = Buffer.from( secret, 'base64' );
+                    prm = moment.utc().format( 'YYYYMMDD' );
+                    derived_key256 = hkdf( raw_key, 32, {
+                        salt: Buffer.from( `example.com:MAC` ),
+                        info: prm,
+                        hash: 'sha256',
+                    } );
+                    derived_key512 = hkdf( raw_key, 32, {
+                        salt: Buffer.from( `example.com:MAC` ),
+                        info: prm,
+                        hash: 'sha512',
+                    } );
+
+                    // just in case
+                    expect( derived_key256.toString( 'base64' ) )
+                        .not.to.equal( derived_key512.toString( 'base64' ) );
+                } );
+            } ) );
+
+            it ( 'should work correctly', $as_test( ( as ) => {
+                const tests = {
+                    md5 : 'HMD5',
+                    sha256 : 'HS256',
+                    sha384 : 'HS384',
+                    sha512 : 'HS512',
+                };
+
+                as.forEach( tests, ( as, hf, algo ) => {
+                    const base = crypto.randomBytes( 250 );
+                    const sig256 = crypto.createHmac( hf, derived_key256 )
+                        .update( base ).digest()
+                        .toString( 'base64' );
+                    const sig512 = crypto.createHmac( hf, derived_key512 )
+                        .update( base ).digest()
+                        .toString( 'base64' );
+                    mstr_auth.checkMAC(
+                        as,
+                        base,
+                        {
+                            msid,
+                            algo: algo,
+                            kds: 'HKDF256',
+                            prm,
+                            sig: sig256,
+                        },
+                        {}
+                    );
+                    mstr_auth.checkMAC(
+                        as,
+                        base,
+                        {
+                            msid,
+                            algo: algo,
+                            kds: 'HKDF512',
+                            prm,
+                            sig: sig512,
+                        },
+                        {}
+                    );
+                } );
+            } ) );
+
+            it ( 'should detect invalid signature', $as_test(
+                ( as ) => {
+                    const base = crypto.randomBytes( 250 );
+                    const sig = crypto.createHmac( 'sha256', derived_key256 )
+                        .update( base.slice( 1 ) ).digest()
+                        .toString( 'base64' );
+                    mstr_auth.checkMAC(
+                        as,
+                        base,
+                        {
+                            msid,
+                            algo: 'HS256',
+                            kds: 'HKDF256',
+                            prm,
+                            sig,
+                        },
+                        {}
+                    );
+                },
+                ( as, err ) => {
+                    expect( err ).equal( 'SecurityError' );
+                    expect( as.state.error_info ).equal( 'Authentication failed' );
+                    as.success();
+                }
+            ) );
+
+            it ( 'should detect invalid derived key', $as_test(
+                ( as ) => {
+                    const base = crypto.randomBytes( 250 );
+                    const sig = crypto.createHmac( 'sha256', crypto.randomBytes( 32 ) )
+                        .update( base ).digest()
+                        .toString( 'base64' );
+                    mstr_auth.checkMAC(
+                        as,
+                        base,
+                        {
+                            msid,
+                            algo: 'HS256',
+                            kds: 'HKDF256',
+                            prm,
+                            sig,
+                        },
+                        {}
+                    );
+                },
+                ( as, err ) => {
+                    expect( err ).equal( 'SecurityError' );
+                    expect( as.state.error_info ).equal( 'Authentication failed' );
+                    as.success();
+                }
+            ) );
+
+            it ( 'should detect KDS mismatch', $as_test(
+                ( as ) => {
+                    const base = crypto.randomBytes( 250 );
+                    const sig = crypto.createHmac( 'sha256', derived_key256 )
+                        .update( base ).digest()
+                        .toString( 'base64' );
+                    mstr_auth.checkMAC(
+                        as,
+                        base,
+                        {
+                            msid,
+                            algo: 'HS256',
+                            kds: 'HKDF512',
+                            prm,
+                            sig,
+                        },
+                        {}
+                    );
+                },
+                ( as, err ) => {
+                    expect( err ).equal( 'SecurityError' );
+                    expect( as.state.error_info ).equal( 'Authentication failed' );
+                    as.success();
+                }
+            ) );
+
+            it ( 'should detect algo mismatch', $as_test(
+                ( as ) => {
+                    const base = crypto.randomBytes( 250 );
+                    const sig = crypto.createHmac( 'sha512', derived_key256 )
+                        .update( base ).digest()
+                        .toString( 'base64' );
+                    mstr_auth.checkMAC(
+                        as,
+                        base,
+                        {
+                            msid,
+                            algo: 'HS256',
+                            kds: 'HKDF256',
+                            prm,
+                            sig,
+                        },
+                        {}
+                    );
+                },
+                ( as, err ) => {
+                    expect( err ).equal( 'SecurityError' );
+                    expect( as.state.error_info ).equal( 'Authentication failed' );
+                    as.success();
+                }
+            ) );
+
+            it ( 'should detect prm mismatch', $as_test(
+                ( as ) => {
+                    const base = crypto.randomBytes( 250 );
+                    const sig = crypto.createHmac( 'sha256', derived_key256 )
+                        .update( base ).digest()
+                        .toString( 'base64' );
+                    mstr_auth.checkMAC(
+                        as,
+                        base,
+                        {
+                            msid,
+                            algo: 'HS256',
+                            kds: 'HKDF256',
+                            prm: '20180101',
+                            sig,
+                        },
+                        {}
+                    );
+                },
+                ( as, err ) => {
+                    expect( err ).equal( 'SecurityError' );
+                    expect( as.state.error_info ).equal( 'Authentication failed' );
+                    as.success();
+                }
+            ) );
+
+            it ( 'should detect if master auth is disabled', $as_test(
+                ( as ) => {
+                    vars.app._scope.config.master_auth = false;
+                    const base = crypto.randomBytes( 250 );
+                    const sig = crypto.createHmac( 'sha256', derived_key256 )
+                        .update( base ).digest()
+                        .toString( 'base64' );
+                    mstr_auth.checkMAC(
+                        as,
+                        base,
+                        {
+                            msid,
+                            algo: 'HS256',
+                            kds: 'HKDF256',
+                            prm,
+                            sig,
+                        },
+                        {}
+                    );
+                },
+                ( as, err ) => {
+                    vars.app._scope.config.master_auth = true;
+                    expect( as.state.error_info )
+                        .to.equal( 'Master auth is disabled' );
+                    expect( err ).to.equal( 'SecurityError' );
+                    as.success();
+                }
+            ) );
+        } );
+
+        describe( 'genMAC', function() {
+        } );
+
+        describe( 'exposeDerivedKey', function() {
+        } );
+
+        describe( 'getNewEncryptedSecret', function() {
+        } );
     } );
 
     describe( 'Autoreg', function() {

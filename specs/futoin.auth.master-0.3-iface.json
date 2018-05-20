@@ -19,6 +19,16 @@
         },
         "sig": "MACValue"
       }
+    },
+    "CipherType": {
+      "type": "GenericIdentifier",
+      "minlen": 1,
+      "maxlen": 32
+    },
+    "CipherMode": {
+      "type": "string",
+      "regex": "^[A-Z0-9][A-Z0-9_]{1,14}[A-Z0-9]$",
+      "desc": "CBC, CTR, GCM, CFB and others"
     }
   },
   "funcs": {
@@ -50,7 +60,10 @@
         "source": "ClientFingerprints"
       },
       "result": {
-        "info": "AuthInfo",
+        "auth": "AuthInfo",
+        "prm": "Base64",
+        "etype": "CipherType",
+        "emode": "CipherMode",
         "ekey": "EncryptedKey"
       },
       "throws": [

@@ -24,7 +24,7 @@ module.exports = function( { it, vars } ) {
             auth_service: false,
             password_len: 16,
             key_bits: 256,
-            def_service_ms_max: 3,
+            def_service_ms_max: 10,
             def_user_ms_max: 0,
         } ) );
     } ) );
@@ -61,7 +61,7 @@ module.exports = function( { it, vars } ) {
             auth_service: true,
             password_len: 16,
             key_bits: 256,
-            def_service_ms_max: 3,
+            def_service_ms_max: 10,
             def_user_ms_max: 0,
         } ) );
     } ) );

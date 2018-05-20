@@ -42,7 +42,7 @@ class MasterAuthService extends BaseService {
     }
 
     _checkMasterAuth( as ) {
-        if ( !this._scope.master_auth ) {
+        if ( !this._scope.config.master_auth ) {
             as.error( Errors.SecurityError, 'Master auth is disabled' );
         }
     }
@@ -55,9 +55,9 @@ class MasterAuthService extends BaseService {
         const reqinfo_info = reqinfo.info;
 
         const global_id =
-            ( reqinfo_info[reqinfo.SECURITY_LEVEL] === 'System' )
+            ( reqinfo_info.SECURITY_LEVEL === 'System' )
                 ? config.domains[0]
-                : reqinfo.userInfo().global_id;
+                : reqinfo_info.USER_INFO.global_id;
         //---
         const {
             base,
@@ -65,26 +65,68 @@ class MasterAuthService extends BaseService {
             source,
         } = reqinfo.params();
         //---
-        secutil.ensureDerivedKey( as, ccm, global_id, { msid, algo, kds, prm } );
-        as.add( ( as, { auth_info, dsid, hash } ) => {
+        const { macf, hash } = secutil.parseMACAlgo( as, algo );
+        secutil.ensureDerivedKey(
+            as, ccm, 'MAC',
+            { msid, type: macf, kds, salt: global_id, prm }
+        );
+        as.add( ( as, { auth_info, dsid } ) => {
             secutil.checkUser( as, ccm, auth_info.local_id, source );
-            ccm.iface( SVDATA_FACE ).verify( as, dsid, base, sig, hash );
-            as.successStep( { auth_info } );
+            const raw_sig = Buffer.from( sig, 'base64' );
+            ccm.iface( SVDATA_FACE ).verify( as, dsid, base, raw_sig, hash );
+            as.successStep( auth_info, { global_id, msid, hash, kds, dsid } );
         } );
     }
 
     checkMAC( as, reqinfo ) {
-        this._checkCommon( as, reqinfo );
-        as.add( ( as, auth_info ) => reqinfo.result( auth_info ) );
+        as.add(
+            ( as ) => {
+                this._checkCommon( as, reqinfo );
+                as.add( ( as, auth_info ) => {
+                    reqinfo.result( auth_info );
+                } );
+            },
+            ( as, err ) => {
+                if ( err !== Errors.SecurityError ) {
+                    as.error( Errors.SecurityError, 'Authentication failed' );
+                }
+            }
+        );
     }
 
     genMAC( as, _reqinfo ) {
     }
 
     exposeDerivedKey( as, reqinfo ) {
-        this._checkCommon( as, reqinfo );
-        as.add( ( as, _auth_info, _dsid ) => {
-        } );
+        as.add(
+            ( as ) => {
+                this._checkCommon( as, reqinfo );
+                as.add( ( as, auth_info, { global_id, msid, kds, dsid } ) => {
+                    const ccm = reqinfo.ccm();
+                    const etype = 'AES';
+                    const emode = 'GCM';
+
+                    secutil.encryptKey(
+                        as, ccm, dsid,
+                        { msid, type: etype, kds, salt: global_id, prm: dsid }
+                    );
+                    as.add( ( as, ekey ) => {
+                        reqinfo.result( {
+                            auth_info,
+                            prm: dsid,
+                            etype,
+                            emode,
+                            ekey,
+                        } );
+                    } );
+                } );
+            },
+            ( as, err ) => {
+                if ( err !== Errors.SecurityError ) {
+                    as.error( Errors.SecurityError, 'Authentication failed' );
+                }
+            }
+        );
     }
 
     getNewEncryptedSecret( as, reqinfo ) {
