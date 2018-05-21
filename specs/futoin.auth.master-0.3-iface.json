@@ -52,7 +52,7 @@
         "base": "MACBase",
         "reqsec": "MACSecField"
       },
-      "result": "MACSecField",
+      "result": "MACValue",
       "throws": [
         "SecurityError"
       ]

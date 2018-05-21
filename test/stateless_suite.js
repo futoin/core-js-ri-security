@@ -216,11 +216,7 @@ module.exports = function( { describe, it, vars } ) {
                     }
                 );
                 as.add( ( as, res ) => {
-                    expect( res ).to.eql( {
-                        user : user1_id,
-                        algo : 'HS384',
-                        sig,
-                    } );
+                    expect( res ).to.eql( sig );
                 } );
             } );
         } ) );

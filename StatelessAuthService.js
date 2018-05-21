@@ -125,11 +125,7 @@ class StatelessAuthService extends BaseService {
             svdata.sign( as, key_info.id, base, hash );
 
             as.add( ( as, sig ) => {
-                reqinfo.result( {
-                    user : user,
-                    algo : algo,
-                    sig : sig.toString( 'base64' ),
-                } );
+                reqinfo.result( sig.toString( 'base64' ) );
             } );
         } );
     }

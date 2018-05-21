@@ -117,13 +117,7 @@ class MasterAuthService extends BaseService {
         as.add( ( as, { dsid } ) => {
             ccm.iface( SVDATA_FACE ).sign( as, dsid, base, hash );
             as.add( ( as, sig ) => {
-                reqinfo.result( {
-                    msid,
-                    algo,
-                    kds,
-                    prm,
-                    sig: sig.toString( 'base64' ),
-                } );
+                reqinfo.result( sig.toString( 'base64' ) );
             } );
         } );
     }

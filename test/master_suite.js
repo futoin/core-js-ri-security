@@ -389,13 +389,7 @@ module.exports = function( { describe, it, vars } ) {
 
                     );
                     as.add( ( as, res ) => {
-                        expect( res ).to.eql( {
-                            msid,
-                            algo,
-                            kds: 'HKDF256',
-                            prm,
-                            sig: sig256,
-                        } );
+                        expect( res ).to.eql( sig256 );
                     } );
 
                     // ---
@@ -414,13 +408,7 @@ module.exports = function( { describe, it, vars } ) {
                         }
                     );
                     as.add( ( as, res ) => {
-                        expect( res ).to.eql( {
-                            msid,
-                            algo,
-                            kds: 'HKDF512',
-                            prm,
-                            sig: sig512,
-                        } );
+                        expect( res ).to.eql( sig512 );
                     } );
                 } );
             } ) );
