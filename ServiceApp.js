@@ -65,6 +65,8 @@ const MasterAuthService = require( './MasterAuthService' );
 const MasterAutoregFace = require( './MasterAutoregFace' );
 const MasterAutoregService = require( './MasterAutoregService' );
 
+const SimpleSecurityProvider = require( './SimpleSecurityProvider' );
+
 /**
  * All-in-one AuthService initialization
  */
@@ -123,7 +125,12 @@ class ServiceApp {
         }
 
         if ( !publicExecutor ) {
-            publicExecutor = new NodeExecutor( ccm, options.publicExecutorOptions );
+            const securityProvider = new SimpleSecurityProvider();
+            const opts = Object.assign(
+                { securityProvider },
+                options.publicExecutorOptions
+            );
+            publicExecutor = new NodeExecutor( ccm, opts );
         }
 
         if ( !notExpectedHandler ) {

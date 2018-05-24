@@ -4,6 +4,11 @@ const expect = require( 'chai' ).expect;
 const crypto = require( 'crypto' );
 const $as_test = require( 'futoin-asyncsteps/testcase' );
 const {
+    SpecTools,
+    MasterAuth,
+    AdvancedCCM,
+} = require( 'futoin-invoker' );
+const {
     FTN8_VERSION,
     SVKEY_FACE,
     MANAGE_FACE,
@@ -13,6 +18,7 @@ const {
 } = require( '../lib/main' );
 const hkdf = require( 'futoin-hkdf' );
 const moment = require( 'moment' );
+const MasterAutoregFace = require( '../MasterAutoregFace' );
 
 module.exports = function( { describe, it, vars } ) {
     let ccm;
@@ -617,5 +623,93 @@ module.exports = function( { describe, it, vars } ) {
     } );
 
     describe( 'Autoreg', function() {
+    } );
+
+    describe( 'SimpleSecurityProvider', function() {
+        class TestMasterAuth extends MasterAuth {
+            constructor( opts ) {
+                super();
+                this._opts = opts;
+            }
+
+            signMessage( ctx, req ) {
+                const { macAlgo } = ctx.options;
+                const { key_id, prm } = this._opts;
+                const sig = this.genMAC( ctx, req ).toString( 'base64' );
+                req.sec = `-mmac:${key_id}:${macAlgo}:HKDF256:${prm}:${sig}`;
+            }
+
+            genMAC( ctx, msg ) {
+                const { prm, raw_key } = this._opts;
+                const derived = hkdf( raw_key, 32, {
+                    salt: Buffer.from( `example.com:MAC` ),
+                    info: prm,
+                    hash: 'sha256',
+                } );
+                return SpecTools.genHMAC( {}, {
+                    macKey: derived.toString( 'base64' ),
+                    macAlgo: ctx.options.macAlgo,
+                }, msg );
+            }
+        }
+
+        it ( 'should work with MAC', $as_test( ( as ) => {
+            mstr_manage.getNewPlainSecret( as, service1_id );
+            as.add( ( as, { id, secret } ) => {
+                const tmpccm = new AdvancedCCM( {
+                    masterAuth: new TestMasterAuth( {
+                        key_id: id,
+                        raw_key: Buffer.from( secret, 'base64' ),
+                        prm: '20180101',
+                    } ),
+                } );
+
+                MasterAutoregFace.register(
+                    as, tmpccm, 'test',
+                    `secure+http://localhost:${vars.httpPort}`,
+                    'master'
+                );
+
+                as.add( ( as ) => {
+                    tmpccm.iface( 'test' ).ping( as, 1234 );
+                } );
+                as.add( ( as, res ) => {
+                    expect( res ).to.equal( 1234 );
+                    tmpccm.close();
+                } );
+            } );
+        } ) );
+
+        it ( 'should detect SecurityError with MAC', $as_test(
+            ( as ) => {
+                mstr_manage.getNewPlainSecret( as, service1_id );
+                as.add( ( as, { id, secret } ) => {
+                    const tmpccm = new AdvancedCCM( {
+                        masterAuth: new TestMasterAuth( {
+                            key_id: id,
+                            raw_key: Buffer.from( '123' + secret, 'base64' ),
+                            prm: '20180101',
+                        } ),
+                    } );
+                    as.state.tmpccm = tmpccm;
+
+                    MasterAutoregFace.register(
+                        as, tmpccm, 'test',
+                        `secure+http://localhost:${vars.httpPort}`,
+                        'master'
+                    );
+                } );
+                as.add( ( as ) => {
+                    as.state.tmpccm.iface( 'test' ).ping( as, 1234 );
+                } );
+            },
+            ( as, err ) => {
+                expect( err ).to.equal( 'SecurityError' );
+                expect( as.state.error_info ).to
+                    .equal( 'Authentication failed' );
+                as.state.tmpccm.close();
+                as.success();
+            }
+        ) );
     } );
 };

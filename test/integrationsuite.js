@@ -19,11 +19,13 @@ module.exports = function( describe, it, databaseConfig ) {
     const STORAGE_PASSWORD = 'e3b694af320229f9b464a358eae063a8';
 
     before( 'common', $as_test( ( as ) => {
+        vars.httpPort = httpPort;
         vars.app = new ServiceApp( as, {
             databaseConfig : databaseConfig,
             publicExecutorOptions : {
                 httpAddr: 'localhost',
                 httpPort: httpPort++,
+                secureChannel: true,
             },
             config: {
                 domains: [
@@ -40,6 +42,8 @@ module.exports = function( describe, it, databaseConfig ) {
     } ) );
 
     after( 'specific', function( done ) {
+        console.log( 'Closing CCM...' );
+        this.timeout( 10e3 );
         vars.app.close( done );
     } );
 

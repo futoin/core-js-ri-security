@@ -67,6 +67,10 @@ $ yarn add futoin-security --save
 <dt><a href="#ServiceApp">ServiceApp</a></dt>
 <dd><p>All-in-one AuthService initialization</p>
 </dd>
+<dt><a href="#SimpleSecurityProvider">SimpleSecurityProvider</a></dt>
+<dd><p>Simple passthru FTN8 security provider for Executor.</p>
+<p>NOTE: it&#39;s suitable for lightweight services without own SecVault.</p>
+</dd>
 <dt><a href="#SatelessAuthFace">SatelessAuthFace</a></dt>
 <dd><p>FTN8.1: Stateless AuthService Face</p>
 </dd>
@@ -187,6 +191,14 @@ Shutdown of app and related instances
 | --- | --- | --- | --- |
 | [done] | <code>callable</code> | <code></code> | done callback |
 
+<a name="SimpleSecurityProvider"></a>
+
+## SimpleSecurityProvider
+Simple passthru FTN8 security provider for Executor.
+
+NOTE: it's suitable for lightweight services without own SecVault.
+
+**Kind**: global class  
 <a name="SatelessAuthFace"></a>
 
 ## SatelessAuthFace

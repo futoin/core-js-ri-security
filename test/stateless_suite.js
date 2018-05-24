@@ -3,6 +3,10 @@
 const expect = require( 'chai' ).expect;
 const crypto = require( 'crypto' );
 const $as_test = require( 'futoin-asyncsteps/testcase' );
+
+const MasterAutoregFace = require( '../MasterAutoregFace' );
+const { AdvancedCCM } = require( 'futoin-invoker' );
+
 const {
     MANAGE_FACE,
     STLS_AUTH_FACE,
@@ -410,6 +414,102 @@ module.exports = function( { describe, it, vars } ) {
                 expect( as.state.error_info )
                     .to.equal( 'Stateless MAC auth is disabled' );
                 expect( err ).to.equal( 'SecurityError' );
+                as.success();
+            }
+        ) );
+    } );
+
+    describe( 'SimpleSecurityProvider', function() {
+        it ( 'should work with Clear', $as_test( ( as ) => {
+            const tmpccm = new AdvancedCCM();
+
+            stls_manage.genNewSecret( as, user1_id, system_id, false );
+            as.add( ( as, secret ) => {
+                MasterAutoregFace.register(
+                    as, tmpccm, 'test',
+                    `secure+http://localhost:${vars.httpPort}`,
+                    `${user1_id}:${secret}`
+                );
+            } );
+            as.add( ( as ) => {
+                tmpccm.iface( 'test' ).ping( as, 1234 );
+            } );
+            as.add( ( as, res ) => {
+                expect( res ).to.equal( 1234 );
+                tmpccm.close();
+            } );
+        } ) );
+
+        it ( 'should detect SecurityError with Clear', $as_test(
+            ( as ) => {
+                const tmpccm = new AdvancedCCM();
+                as.state.tmpccm = tmpccm;
+
+                stls_manage.genNewSecret( as, user1_id, system_id, false );
+                as.add( ( as, secret ) => {
+                    MasterAutoregFace.register(
+                        as, tmpccm, 'test',
+                        `secure+http://localhost:${vars.httpPort}`,
+                        `${user1_id}:${secret}123`
+                    );
+                } );
+                as.add( ( as ) => {
+                    tmpccm.iface( 'test' ).ping( as, 1234 );
+                } );
+            },
+            ( as, err ) => {
+                expect( err ).to.equal( 'SecurityError' );
+                expect( as.state.error_info ).to
+                    .match( /^Invalid user or password:/ );
+                as.state.tmpccm.close();
+                as.success();
+            }
+        ) );
+
+        it ( 'should work with MAC', $as_test( ( as ) => {
+            const tmpccm = new AdvancedCCM();
+
+            stls_manage.genNewSecret( as, user1_id, system_id, true );
+            as.add( ( as, macKey ) => {
+                MasterAutoregFace.register(
+                    as, tmpccm, 'test',
+                    `secure+http://localhost:${vars.httpPort}`,
+                    `-smac:${user1_id}`,
+                    { macKey }
+                );
+            } );
+            as.add( ( as ) => {
+                tmpccm.iface( 'test' ).ping( as, 1234 );
+            } );
+            as.add( ( as, res ) => {
+                expect( res ).to.equal( 1234 );
+                tmpccm.close();
+            } );
+        } ) );
+
+        it ( 'should detect SecurityError with MAC', $as_test(
+            ( as ) => {
+                const tmpccm = new AdvancedCCM();
+                as.state.tmpccm = tmpccm;
+
+                stls_manage.genNewSecret( as, user1_id, system_id, true );
+                as.add( ( as, macKey ) => {
+                    MasterAutoregFace.register(
+                        as, tmpccm, 'test',
+                        `secure+http://localhost:${vars.httpPort}`,
+                        `-smac:${user1_id}`,
+                        { macKey: '123' + macKey }
+                    );
+                } );
+                as.add( ( as ) => {
+                    tmpccm.iface( 'test' ).ping( as, 1234 );
+                } );
+            },
+            ( as, err ) => {
+                expect( err ).to.equal( 'SecurityError' );
+                expect( as.state.error_info ).to
+                    .match( /^Invalid user or password:/ );
+                as.state.tmpccm.close();
                 as.success();
             }
         ) );
