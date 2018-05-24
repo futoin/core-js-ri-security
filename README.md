@@ -83,6 +83,10 @@ $ yarn add futoin-security --save
 <dt><a href="#StatelessManageService">StatelessManageService</a></dt>
 <dd><p>FTN8.1.: Stateless Manage Service</p>
 </dd>
+<dt><a href="#StaticMasterAuth">StaticMasterAuth</a></dt>
+<dd><p>MasterAuth implementation for AdvancedCCM with static Master Key</p>
+<p>NOTE: this implementation rotates only derived keys</p>
+</dd>
 <dt><a href="#BaseFace">BaseFace</a></dt>
 <dd><p>Base Face with neutral common registration functionality</p>
 </dd>
@@ -223,6 +227,29 @@ FTN8.1: Stateless Manage Face
 FTN8.1.: Stateless Manage Service
 
 **Kind**: global class  
+<a name="StaticMasterAuth"></a>
+
+## StaticMasterAuth
+MasterAuth implementation for AdvancedCCM with static Master Key
+
+NOTE: this implementation rotates only derived keys
+
+**Kind**: global class  
+<a name="new_StaticMasterAuth_new"></a>
+
+### new StaticMasterAuth(options, keyId, keyData, [paramFormat], [kds], [macAlgo])
+C-tor
+
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| options | <code>object</code> |  | Options |
+| keyId | <code>string</code> |  | master key ID |
+| keyData | <code>string</code> |  | master key data in Base64 |
+| [paramFormat] | <code>string</code> | <code>&quot;YYYYMMDD&quot;</code> | format for derivation parameter |
+| [kds] | <code>string</code> | <code>&quot;HKDF256&quot;</code> | key derivation strategy |
+| [macAlgo] | <code>string</code> | <code>&quot;HS256&quot;</code> | MAC algorithm |
+
 <a name="BaseFace"></a>
 
 ## BaseFace

@@ -3,9 +3,9 @@
 const expect = require( 'chai' ).expect;
 const crypto = require( 'crypto' );
 const $as_test = require( 'futoin-asyncsteps/testcase' );
+const $as_request = require( 'futoin-request' );
 const {
     SpecTools,
-    MasterAuth,
     AdvancedCCM,
 } = require( 'futoin-invoker' );
 const {
@@ -19,6 +19,7 @@ const {
 const hkdf = require( 'futoin-hkdf' );
 const moment = require( 'moment' );
 const MasterAutoregFace = require( '../MasterAutoregFace' );
+const StaticMasterAuth = require( '../StaticMasterAuth' );
 
 module.exports = function( { describe, it, vars } ) {
     let ccm;
@@ -625,43 +626,19 @@ module.exports = function( { describe, it, vars } ) {
     describe( 'Autoreg', function() {
     } );
 
+    describe( 'StaticMasterAuth', function() {
+    } );
+
     describe( 'SimpleSecurityProvider', function() {
-        class TestMasterAuth extends MasterAuth {
-            constructor( opts ) {
-                super();
-                this._opts = opts;
-            }
-
-            signMessage( ctx, req ) {
-                const { macAlgo } = ctx.options;
-                const { key_id, prm } = this._opts;
-                const sig = this.genMAC( ctx, req ).toString( 'base64' );
-                req.sec = `-mmac:${key_id}:${macAlgo}:HKDF256:${prm}:${sig}`;
-            }
-
-            genMAC( ctx, msg ) {
-                const { prm, raw_key } = this._opts;
-                const derived = hkdf( raw_key, 32, {
-                    salt: Buffer.from( `example.com:MAC` ),
-                    info: prm,
-                    hash: 'sha256',
-                } );
-                return SpecTools.genHMAC( {}, {
-                    macKey: derived.toString( 'base64' ),
-                    macAlgo: ctx.options.macAlgo,
-                }, msg );
-            }
-        }
-
         it ( 'should work with MAC', $as_test( ( as ) => {
             mstr_manage.getNewPlainSecret( as, service1_id );
             as.add( ( as, { id, secret } ) => {
                 const tmpccm = new AdvancedCCM( {
-                    masterAuth: new TestMasterAuth( {
-                        key_id: id,
-                        raw_key: Buffer.from( secret, 'base64' ),
-                        prm: '20180101',
+                    masterAuth:  new StaticMasterAuth( {
+                        keyId: id,
+                        keyData: secret,
                     } ),
+                    serviceGlobalId: 'example.com',
                 } );
 
                 MasterAutoregFace.register(
@@ -685,10 +662,9 @@ module.exports = function( { describe, it, vars } ) {
                 mstr_manage.getNewPlainSecret( as, service1_id );
                 as.add( ( as, { id, secret } ) => {
                     const tmpccm = new AdvancedCCM( {
-                        masterAuth: new TestMasterAuth( {
-                            key_id: id,
-                            raw_key: Buffer.from( '123' + secret, 'base64' ),
-                            prm: '20180101',
+                        masterAuth: new StaticMasterAuth( {
+                            keyId: id,
+                            keyData: secret,
                         } ),
                     } );
                     as.state.tmpccm = tmpccm;

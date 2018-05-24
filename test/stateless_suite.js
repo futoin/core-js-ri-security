@@ -12,6 +12,10 @@ const {
     STLS_AUTH_FACE,
     STLS_MANAGE_FACE,
 } = require( '../lib/main' );
+const {
+    reqinfo2source,
+} = require( '../lib/util' );
+const $as_request = require( 'futoin-request' );
 
 module.exports = function( { describe, it, vars } ) {
     let ccm;
@@ -513,5 +517,45 @@ module.exports = function( { describe, it, vars } ) {
                 as.success();
             }
         ) );
+
+        it ( 'should collect user-agent and client token', $as_test( ( as ) => {
+            const spec = {
+                iface: 'futoin.test.source',
+                version: '0.1',
+                ftn3rev: '1.9',
+                funcs: {
+                    dump: {
+                        result: 'map',
+                    },
+                },
+                requires: [ 'AllowAnonymous' ],
+            };
+
+            vars.app._public_executor.register( as, 'futoin.test.source:0.1', {
+                dump : ( as, reqinfo ) => {
+                    reqinfo.result( reqinfo2source( reqinfo ) );
+                },
+            }, [ spec ] );
+
+            $as_request.post( as, {
+                url: `http://localhost:${vars.httpPort}`,
+                json: {
+                    f: 'futoin.test.source:0.1:dump',
+                },
+                headers: {
+                    'user-agent': 'My Test',
+                    cookie: 'FTNID=12345',
+                },
+            } );
+            as.add( ( as, _, res ) => {
+                expect( res ).to.eql( { r:
+                    {
+                        source_ip: '127.0.0.1',
+                        user_agent: 'My Test',
+                        client_token: '12345',
+                    },
+                } );
+            } );
+        } ) );
     } );
 };
