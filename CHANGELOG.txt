@@ -1,4 +1,4 @@
-=== (next) ===
+=== 0.3.1 (2018-05-25) ===
 CHANGED: package name to @futoin/security
 
 === 0.3.0 (2018-05-25) ===
