@@ -35,6 +35,8 @@ module.exports = function( describe, it, databaseConfig ) {
             storagePassword: STORAGE_PASSWORD,
         } );
         vars.ccm = vars.app.ccm();
+        vars.ccm.limitZone( 'default', { rate: 0xFFFF } );
+
 
         SpecTools.on( 'error', function() {
             // console.log( arguments );

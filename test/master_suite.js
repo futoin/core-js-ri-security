@@ -11,6 +11,7 @@ const {
 const {
     FTN8_VERSION,
     SVKEY_FACE,
+    SVDATA_FACE,
     MANAGE_FACE,
     MASTER_AUTH_FACE,
     MASTER_AUTOREG_FACE,
@@ -18,6 +19,7 @@ const {
 } = require( '../lib/main' );
 const hkdf = require( 'futoin-hkdf' );
 const moment = require( 'moment' );
+const MasterAuthFace = require( '../MasterAuthFace' );
 const MasterAutoregFace = require( '../MasterAutoregFace' );
 const StaticMasterAuth = require( '../StaticMasterAuth' );
 
@@ -539,11 +541,54 @@ module.exports = function( { describe, it, vars } ) {
                     as.success();
                 }
             ) );
+
+
+            it ( 'should obey Derived key count limit', $as_test(
+                ( as ) => {
+                    as.add( ( as ) => {
+                        const base = crypto.randomBytes( 250 );
+                        as.repeat( 20, ( as, i ) => {
+                            const prm = `test${i}`;
+                            const drv = hkdf( raw_key, 32, {
+                                salt: Buffer.from( `example.com:MAC` ),
+                                info: prm,
+                                hash: 'sha256',
+                            } );
+                            const sig = crypto.createHmac( 'sha256', drv )
+                                .update( base ).digest()
+                                .toString( 'base64' );
+                            mstr_auth.exposeDerivedKey(
+                                as,
+                                base,
+                                {
+                                    msid,
+                                    algo: 'HS256',
+                                    kds: 'HKDF256',
+                                    prm,
+                                    sig,
+                                },
+                                {}
+                            );
+                            as.add( ( as, res ) => expect( res.auth ).eql( {
+                                local_id : service1_id,
+                                global_id : 'mstrsvc1.example.com',
+                            } ) );
+                        } );
+                    } );
+                },
+                ( as, err ) => {
+                    expect( as.state.error_info )
+                        .to.equal( 'Too many derived keys' );
+                    expect( err ).to.equal( 'SecurityError' );
+                    as.success();
+                }
+            ) );
         } );
 
         describe( 'getNewEncryptedSecret', function() {
             let rsa_key_id;
             let rsa_pubkey;
+            let service_ccm;
 
             before( $as_test( ( as ) => {
                 const svkey = ccm.iface( SVKEY_FACE );
@@ -562,35 +607,77 @@ module.exports = function( { describe, it, vars } ) {
                         rsa_pubkey = data.toString( 'base64' );
                     } );
                 } );
+
+                mstr_manage.getNewPlainSecret( as, service1_id );
+                as.add( ( as, { id, secret } ) => {
+                    service_ccm = new AdvancedCCM( {
+                        masterAuth:  new StaticMasterAuth( {
+                            keyId: id,
+                            keyData: secret,
+                        } ),
+                        serviceGlobalId: 'example.com',
+                    } );
+                    service_ccm.limitZone( 'default', { rate: 0xFFFF } );
+                    MasterAuthFace.register(
+                        as, service_ccm, 'test',
+                        `secure+http://localhost:${vars.httpPort}`,
+                        'master' );
+                } );
             } ) );
 
-            /*
-            it ( 'should work correctly with RSA', $as_test( (as) => as.repeat( 3, (as, i ) => {
-                const msg = {
-                    f : `futoin.auth.master:${FTN8_VERSION}:getNewEncryptedSecret`,
-                    p : {
-                        type : 'RSAE-2048',
-                        pubkey : rsa_pubkey,
-                        scope : 'test',
-                    },
-                };
-                const base = [
-                    `f:futoin.auth.master:${FTN8_VERSION}:getNewEncryptedSecret;`,
-                    `p:type:${msg.p.type};pubkey:${msg.p.pubkey};scope:${msg.p.scope};;`
-                ].join('');
-                const sig = crypto.createHmac( 'sha256', derived_key256 )
-                    .update( base ).digest()
-                    .toString( 'base64' );
-                msg.sec = '-mmac';
+            after ( $as_test( ( as ) => {
+                service_ccm.close();
             } ) );
-            */
+
+            it ( 'should work correctly with RSA', $as_test( ( as ) => {
+                as.add( ( as ) => {
+                    const iface = service_ccm.iface( 'test' );
+                    iface.getNewEncryptedSecret(
+                        as,
+                        'RSA',
+                        rsa_pubkey,
+                        'test.example.com'
+                    );
+                    iface.getNewEncryptedSecret(
+                        as,
+                        'RSA',
+                        rsa_pubkey,
+                        'test.example.com'
+                    );
+                    iface.getNewEncryptedSecret(
+                        as,
+                        'RSA',
+                        rsa_pubkey
+                    );
+                    iface.getNewEncryptedSecret(
+                        as,
+                        'RSA',
+                        rsa_pubkey
+                    );
+                } );
+                as.add( ( as, { id, esecret } ) => {
+                    const svkey = ccm.iface( SVKEY_FACE );
+                    svkey.exposeKey( as, id );
+
+                    as.add( ( as, orig_secret ) => {
+                        ccm.iface( SVDATA_FACE ).decrypt(
+                            as,
+                            rsa_key_id,
+                            Buffer.from( esecret, 'base64' )
+                        );
+                        as.add( ( as, new_secret ) => {
+                            expect( orig_secret ).to.eql( new_secret );
+                        } );
+                    } );
+                } );
+            } ) );
 
             it ( 'should detect if master auth is disabled', $as_test(
                 ( as ) => {
                     vars.app._scope.config.master_auth = false;
                     mstr_auth.getNewEncryptedSecret(
                         as,
-                        'RSAE-2048',
+                        'RSA',
                         rsa_pubkey,
                         'test.example.com'
                     );
@@ -604,18 +691,121 @@ module.exports = function( { describe, it, vars } ) {
                 }
             ) );
 
-            it ( 'should forbid to be used by AuthService itself', $as_test(
+            it ( 'should check for Master Auth', $as_test(
                 ( as ) => {
                     mstr_auth.getNewEncryptedSecret(
                         as,
-                        'RSAE-2048',
+                        'RSA',
                         rsa_pubkey,
                         'test.example.com'
                     );
                 },
                 ( as, err ) => {
                     expect( as.state.error_info )
+                        .to.equal( 'Master Auth is required' );
+                    expect( err ).to.equal( 'SecurityError' );
+                    as.success();
+                }
+            ) );
+
+            it ( 'should not allow AuthService itself', $as_test(
+                ( as ) => {
+                    mstr_manage.getNewPlainSecret( as, system_id );
+                    as.add( ( as, { id, secret } ) => {
+                        MasterAuthFace.register(
+                            as, service_ccm, 'itself',
+                            `secure+http://localhost:${vars.httpPort}`,
+                            'master', {
+                                masterAuth:  new StaticMasterAuth( {
+                                    keyId: id,
+                                    keyData: secret,
+                                } ),
+                                serviceGlobalId: 'example.com',
+                            }
+                        );
+                    } );
+                    as.add( ( as ) => {
+                        const iface = service_ccm.iface( 'itself' );
+                        iface.getNewEncryptedSecret(
+                            as,
+                            'RSA',
+                            rsa_pubkey,
+                            'test.example.com'
+                        );
+                    } );
+                },
+                ( as, err ) => {
+                    expect( as.state.error_info )
                         .to.equal( 'Can not be used by AuthService itself' );
+                    expect( err ).to.equal( 'SecurityError' );
+                    as.success();
+                }
+            ) );
+
+            it ( 'should forbid scoped Master Key for exchange', $as_test(
+                ( as ) => {
+                    const iface = service_ccm.iface( 'test' );
+                    iface.getNewEncryptedSecret(
+                        as,
+                        'RSA',
+                        rsa_pubkey,
+                        'test.example.com'
+                    );
+                    as.add( ( as, { id, esecret } ) => {
+                        ccm.iface( SVDATA_FACE ).decrypt(
+                            as,
+                            rsa_key_id,
+                            Buffer.from( esecret, 'base64' )
+                        );
+                        as.add( ( as, raw_key ) => {
+                            MasterAuthFace.register(
+                                as, service_ccm, 'scoped',
+                                `secure+http://localhost:${vars.httpPort}`,
+                                'master', {
+                                    masterAuth:  new StaticMasterAuth( {
+                                        keyId: id,
+                                        keyData: Buffer.from( raw_key, 'base64' ),
+                                    } ),
+                                    serviceGlobalId: 'example.com',
+                                }
+                            );
+                        } );
+                    } );
+
+                    as.add( ( as ) => {
+                        const iface = service_ccm.iface( 'scoped' );
+                        iface.getNewEncryptedSecret(
+                            as,
+                            'RSA',
+                            rsa_pubkey,
+                            'test.example.com'
+                        );
+                    } );
+                },
+                ( as, err ) => {
+                    expect( as.state.error_info )
+                        .to.equal( 'Scoped Master key cannot be used for exchange' );
+                    expect( err ).to.equal( 'SecurityError' );
+                    as.success();
+                }
+            ) );
+
+            it ( 'should obey Master key count limit', $as_test(
+                ( as ) => {
+                    as.add( ( as ) => {
+                        const iface = service_ccm.iface( 'test' );
+
+                        as.repeat( 20, ( as, i ) => iface.getNewEncryptedSecret(
+                            as,
+                            'RSA',
+                            rsa_pubkey,
+                            `test${i}.example.com`
+                        ) );
+                    } );
+                },
+                ( as, err ) => {
+                    expect( as.state.error_info )
+                        .to.equal( 'Too many Master keys' );
                     expect( err ).to.equal( 'SecurityError' );
                     as.success();
                 }
@@ -627,6 +817,57 @@ module.exports = function( { describe, it, vars } ) {
     } );
 
     describe( 'StaticMasterAuth', function() {
+        it ( 'should detect missing keyId', $as_test(
+            ( as ) => {
+                new StaticMasterAuth( {
+                    keyData: '123',
+                } );
+            },
+            ( as, err ) => {
+                expect( err ).to.equal( 'Missing keyId for StaticMasterAuth' );
+                as.success();
+            }
+        ) );
+
+        it ( 'should detect missing keyData', $as_test(
+            ( as ) => {
+                new StaticMasterAuth( {
+                    keyId: '123',
+                } );
+            },
+            ( as, err ) => {
+                expect( err ).to.equal( 'Missing keyData for StaticMasterAuth' );
+                as.success();
+            }
+        ) );
+
+        it ( 'should check KDS', $as_test(
+            ( as ) => {
+                new StaticMasterAuth( {
+                    keyId: '123',
+                    keyData: '123',
+                    kds: 'invalid',
+                } );
+            },
+            ( as, err ) => {
+                expect( err ).to.equal( 'InvokerError: Unknown KDS: invalid' );
+                as.success();
+            }
+        ) );
+
+        it ( 'should check macAlgo', $as_test(
+            ( as ) => {
+                new StaticMasterAuth( {
+                    keyId: '123',
+                    keyData: '123',
+                    macAlgo: 'KMAC-128',
+                } );
+            },
+            ( as, err ) => {
+                expect( err ).to.equal( 'Only HMAC is supported in StaticMasterAuth' );
+                as.success();
+            }
+        ) );
     } );
 
     describe( 'SimpleSecurityProvider', function() {

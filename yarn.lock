@@ -111,8 +111,8 @@ aproba@^1.0.3:
   resolved "https://registry.yarnpkg.com/aproba/-/aproba-1.2.0.tgz#6802e6264efd18c790a1b0d517f0f2627bf2c94a"
 
 are-we-there-yet@~1.1.2:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/are-we-there-yet/-/are-we-there-yet-1.1.4.tgz#bb5dca382bb94f05e15194373d16fd3ba1ca110d"
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/are-we-there-yet/-/are-we-there-yet-1.1.5.tgz#4b35c2944f062a8bfcda66410760350fe9ddfc21"
   dependencies:
     delegates "^1.0.0"
     readable-stream "^2.0.6"
@@ -936,9 +936,9 @@ futoin-hkdf@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/futoin-hkdf/-/futoin-hkdf-1.0.1.tgz#1df3ffe331039e3b8e09326962b0fa078092a7ee"
 
-futoin-invoker@^1.9.2:
-  version "1.9.2"
-  resolved "https://registry.yarnpkg.com/futoin-invoker/-/futoin-invoker-1.9.2.tgz#0ca1497f992bf82b7fd1d023196e301d3566a7c2"
+futoin-invoker@^1.9.3:
+  version "1.9.3"
+  resolved "https://registry.yarnpkg.com/futoin-invoker/-/futoin-invoker-1.9.3.tgz#d0e226a0ab16c3cb01fdb0ecceb777ba1ad1edda"
   dependencies:
     agentkeepalive "^3.4.1"
     detect-node "^2.0.3"
@@ -2380,7 +2380,7 @@ stream-via@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/stream-via/-/stream-via-1.0.4.tgz#8dccbb0ac909328eb8bc8e2a4bd3934afdaf606c"
 
-string-width@^1.0.1, string-width@^1.0.2:
+string-width@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-1.0.2.tgz#118bdf5b8cdc51a2a7e70d211e07e2b0b9b107d3"
   dependencies:
@@ -2388,7 +2388,7 @@ string-width@^1.0.1, string-width@^1.0.2:
     is-fullwidth-code-point "^1.0.0"
     strip-ansi "^3.0.0"
 
-string-width@^2.1.0, string-width@^2.1.1:
+"string-width@^1.0.2 || 2", string-width@^2.1.0, string-width@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-2.1.1.tgz#ab93f27a8dc13d28cac815c462143a6d9012ae9e"
   dependencies:
@@ -2668,10 +2668,10 @@ which@~1.2.1:
     isexe "^2.0.0"
 
 wide-align@^1.1.0:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/wide-align/-/wide-align-1.1.2.tgz#571e0f1b0604636ebc0dfc21b0339bbe31341710"
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/wide-align/-/wide-align-1.1.3.tgz#ae074e6bdc0c14a431e804e624549c633b000457"
   dependencies:
-    string-width "^1.0.2"
+    string-width "^1.0.2 || 2"
 
 window-size@0.1.0:
   version "0.1.0"

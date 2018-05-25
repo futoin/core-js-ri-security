@@ -164,12 +164,14 @@ class MasterAuthService extends BaseService {
         const svkey = ccm.iface( SVKEY_FACE );
 
         //---
-        const { msid } = reqinfo.info.RAW_REQUEST.sec || {};
+        const sec = ( reqinfo.info.RAW_REQUEST.sec || '' ).split( ':' );
 
-        if ( !msid ) {
+        if ( sec[0] !== '-mmac' ) {
             as.error( Errors.SecurityError,
-                'Can not be used by AuthService itself' );
+                'Master Auth is required' );
         }
+
+        const msid = sec[1];
         //---
 
         const params = reqinfo.params();
@@ -177,10 +179,21 @@ class MasterAuthService extends BaseService {
         const scope = params.scope || '';
 
         // Verify user
-        svkey.getKeyInfo( as, msid );
+        svkey.keyInfo( as, msid );
         as.add( ( as, key_info ) => {
             const old_ext_id = key_info.ext_id;
             const user = key_info.params.local_id;
+
+            // Check if primary key
+            if ( !old_ext_id.match( /^[^:]+:MSTR::/ ) ) {
+                as.error( Errors.SecurityError,
+                    'Scoped Master key cannot be used for exchange' );
+            }
+
+            if ( user === this._scope.system_local_id ) {
+                as.error( Errors.SecurityError,
+                    'Can not be used by AuthService itself' );
+            }
 
             // Check if user is enabled
             secutil.checkUser( as, ccm, user );
@@ -190,7 +203,7 @@ class MasterAuthService extends BaseService {
                 svkey.listKeys( as, `${user}:MSTR:` );
                 as.add( ( as, keys ) => {
                     if ( ( keys.length + 1 ) >= ( ms_max << 1 ) ) {
-                        as.error( Errors.SecurityError, 'Too many master keys' );
+                        as.error( Errors.SecurityError, 'Too many Master keys' );
                     }
                 } );
             } );
@@ -240,7 +253,10 @@ class MasterAuthService extends BaseService {
             );
             as.add( ( as, key_id ) => {
                 evtgen.addEvent( as, 'MSTR_NEW', { user, key_id, scope } );
-                svkey.pubEncryptedKey( as, key_id, { type, pubkey } );
+                svkey.pubEncryptedKey( as, key_id, {
+                    type,
+                    data: Buffer.from( pubkey, 'base64' ),
+                } );
                 as.add( ( as, key_data ) => {
                     reqinfo.result( {
                         id: key_id,

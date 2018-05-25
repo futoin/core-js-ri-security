@@ -46,7 +46,7 @@
     "futoin-database": "^1.7.3",
     "futoin-eventstream": "^0.9.98",
     "futoin-executor": "^1.9.0",
-    "futoin-invoker": "^1.9.2",
+    "futoin-invoker": "^1.9.3",
     "futoin-request": "^1.0.1",
     "futoin-secvault": "^0.9.7",
     "grunt": "^1.0.2",
@@ -62,7 +62,7 @@
     "futoin-database": "^1.7.3",
     "futoin-eventstream": "^0.9.98",
     "futoin-executor": "^1.9.0",
-    "futoin-invoker": "^1.9.2",
+    "futoin-invoker": "^1.9.3",
     "futoin-secvault": "^0.9.7"
   },
   "dependencies": {
