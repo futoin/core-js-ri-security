@@ -544,36 +544,36 @@ module.exports = function( { describe, it, vars } ) {
 
 
             it ( 'should obey Derived key count limit', $as_test(
-                ( as ) => {
-                    as.add( ( as ) => {
-                        const base = crypto.randomBytes( 250 );
-                        as.repeat( 20, ( as, i ) => {
-                            const prm = `test${i}`;
-                            const drv = hkdf( raw_key, 32, {
-                                salt: Buffer.from( `example.com:MAC` ),
-                                info: prm,
-                                hash: 'sha256',
-                            } );
-                            const sig = crypto.createHmac( 'sha256', drv )
-                                .update( base ).digest()
-                                .toString( 'base64' );
-                            mstr_auth.exposeDerivedKey(
-                                as,
-                                base,
-                                {
-                                    msid,
-                                    algo: 'HS256',
-                                    kds: 'HKDF256',
-                                    prm,
-                                    sig,
-                                },
-                                {}
-                            );
-                            as.add( ( as, res ) => expect( res.auth ).eql( {
-                                local_id : service1_id,
-                                global_id : 'mstrsvc1.example.com',
-                            } ) );
+                function( as ) {
+                    this.timeout( 10e3 );
+
+                    const base = crypto.randomBytes( 250 );
+                    as.repeat( 20, ( as, i ) => {
+                        const prm = `test${i}`;
+                        const drv = hkdf( raw_key, 32, {
+                            salt: Buffer.from( `example.com:MAC` ),
+                            info: prm,
+                            hash: 'sha256',
                         } );
+                        const sig = crypto.createHmac( 'sha256', drv )
+                            .update( base ).digest()
+                            .toString( 'base64' );
+                        mstr_auth.exposeDerivedKey(
+                            as,
+                            base,
+                            {
+                                msid,
+                                algo: 'HS256',
+                                kds: 'HKDF256',
+                                prm,
+                                sig,
+                            },
+                            {}
+                        );
+                        as.add( ( as, res ) => expect( res.auth ).eql( {
+                            local_id : service1_id,
+                            global_id : 'mstrsvc1.example.com',
+                        } ) );
                     } );
                 },
                 ( as, err ) => {
@@ -791,7 +791,8 @@ module.exports = function( { describe, it, vars } ) {
             ) );
 
             it ( 'should obey Master key count limit', $as_test(
-                ( as ) => {
+                function( as ) {
+                    this.timeout( 10e3 );
                     as.add( ( as ) => {
                         const iface = service_ccm.iface( 'test' );
 
