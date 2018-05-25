@@ -1,5 +1,5 @@
 {
-  "name": "futoin-security",
+  "name": "@futoin/security",
   "version": "0.3.0",
   "description": "FutoIn Security Concept reference implementation",
   "main": "lib/main.js",

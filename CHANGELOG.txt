@@ -1,2 +1,5 @@
+=== (next) ===
+CHANGED: package name to @futoin/security
+
 === 0.3.0 (2018-05-25) ===
 Initial release

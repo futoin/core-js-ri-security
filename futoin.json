@@ -1,9 +1,14 @@
 {
-  "name": "futoin-security",
+  "name": "@futoin/security",
   "version": "0.3.0",
   "vcs": "git",
   "rms": "npm",
   "rmsRepo": "ignored",
+  "toolTune": {
+    "npm": {
+      "access": "public"
+    }
+  },
   "plugins": {
     "release": "futoin.cid.misc.releasetool"
   },
