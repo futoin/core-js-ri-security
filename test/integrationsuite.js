@@ -43,10 +43,8 @@ module.exports = function( describe, it, databaseConfig ) {
         } );
     } ) );
 
-    after( 'specific', function( done ) {
-        console.log( 'Closing CCM...' );
-        this.timeout( 10e3 );
-        vars.app.close( done );
+    after( 'specific', function() {
+        vars.app.close();
     } );
 
     describe( 'Manage', function() {

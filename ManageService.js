@@ -45,8 +45,11 @@ class ManageService extends BaseService {
         const ccm = reqinfo.ccm();
         const scope = this._scope;
         const { config } = scope;
+        const params = reqinfo.params();
 
-        for ( let [ k, v ] of Object.entries( reqinfo.params() ) ) {
+        for ( let k of Object.keys( params ) ) {
+            const v = params[k];
+
             if ( v !== null ) {
                 config[k] = v;
             }
