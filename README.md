@@ -6,15 +6,35 @@
 
   [![NPM](https://nodei.co/npm/futoin-security.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/futoin-security/)
 
+# WARNING
+
+This release is technology preview. Implemented features are complete from security point of view.
+However, production load requires proper in-memory caching features.
+
 # About
 
 FutoIn Security Concept is alternative to token based authentication & authorization mechanisms.
+
+Features:
+
+* [FutoIn SecVault](https://github.com/futoin/core-js-ri-secvault) sensitive data storage security
+* User & configuration management (FTN8):
+* Stateless Authentication (FTN8.1):
+    - Clear text
+    - Message Authentication Code (HMAC with static key)
+* Master Secret Authentication (FTN8.2):
+    - multiple master keys with custom scope support
+    - derived key per each peer
+    - automatic time-based derived key rotation
+    - optional automatic master key rotation
 
 **Documentation** --> [FutoIn Guide](https://futoin.org/docs/)
 
 Reference implementation of:
  
 * [FTN8: FutoIn Security Concept](https://specs.futoin.org/draft/preview/ftn8_security_concept.html)
+* [FTN8.1: Stateless Authentication](https://specs.futoin.org/draft/preview/ftn8.1_stateless_auth.html)
+* [FTN8.2: Master Secret Authentication](https://specs.futoin.org/draft/preview/ftn8.2_master_auth.html)
 
 Author: [Andrey Galkin](mailto:andrey@futoin.org)
 
