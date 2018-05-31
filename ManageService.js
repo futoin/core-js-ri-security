@@ -173,6 +173,7 @@ class ManageService extends BaseService {
 
     _userInfoCommon( as, reqinfo ) {
         const db = reqinfo.ccm().db( 'ftnsec' );
+        const local_id = reqinfo.params().local_id;
 
         db
             .getPrepared( SYM_SELECT_USER_INFO, ( db ) => {
@@ -191,15 +192,19 @@ class ManageService extends BaseService {
                 qb.where( 'local_id', qb.param( 'local_id' ) );
                 return qb.prepare();
             } )
-            .executeAssoc( as, { local_id: reqinfo.params().local_id } );
+            .executeAssoc( as, { local_id } );
 
         as.add( ( as, rows ) => {
             if ( rows.length !== 1 ) {
-                as.error( 'UnknownUser', `UserID: ${reqinfo.params().local_id}` );
+                as.error( 'UnknownUser', `UserID: ${local_id}` );
             }
 
             as.success( rows[0] );
         } );
+    }
+
+    _onUserInfoUpdate( _evt_data ) {
+        // pass
     }
 
     getUserInfo( as, reqinfo ) {
@@ -268,11 +273,14 @@ class ManageService extends BaseService {
 
             uq.set( changes );
 
-            evt.addXferEvent( xfer, 'USR_MOD',
-                Object.assign( { local_id }, changes ) );
+            const evt_data = Object.assign( { local_id }, changes );
+            evt.addXferEvent( xfer, 'USR_MOD', evt_data );
             xfer.execute( as );
             //---
-            as.add( ( as ) => reqinfo.result( true ) );
+            as.add( ( as ) => {
+                this._onUserInfoUpdate( evt_data );
+                reqinfo.result( true );
+            } );
         } );
     }
 

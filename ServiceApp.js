@@ -52,7 +52,7 @@ const {
 } = require( './lib/main' );
 
 const ManageFace = require( './ManageFace' );
-const ManageService = require( './ManageService' );
+const CachedManageService = require( './CachedManageService' );
 
 const StatelessManageFace = require( './StatelessManageFace' );
 const StatelessManageService = require( './StatelessManageService' );
@@ -88,6 +88,7 @@ class ServiceApp {
      * @param {object} [options.publicExecutorOptions] - public auto-Executor options
      * @param {object} [options.evtOptions] - eventstream options
      * @param {object} [options.secVaultOptions] - secure vault options
+     * @param {object} [options.securityOptions] - security interface options
      */
     constructor( as, options = {} ) {
         let {
@@ -97,6 +98,7 @@ class ServiceApp {
             notExpectedHandler,
             storagePassword,
             secVaultOptions,
+            securityOptions,
         } = options;
 
         // minimize exposure
@@ -182,20 +184,23 @@ class ServiceApp {
 
         as.add( ( as ) => {
             // Init of FutoIn Security services
-            ManageService.register( as, privateExecutor, scope );
-            ManageFace.register( as, ccm, MANAGE_FACE, privateExecutor );
+            CachedManageService.register( as, privateExecutor, scope, Object.assign( {
+                ccm,
+                evtpushExecutor: privateExecutor,
+            }, securityOptions ) );
+            ManageFace.register( as, ccm, MANAGE_FACE, privateExecutor, securityOptions );
 
-            StatelessManageService.register( as, privateExecutor, scope );
-            StatelessManageFace.register( as, ccm, STLS_MANAGE_FACE, privateExecutor );
-            StatelessAuthService.register( as, publicExecutor, scope );
-            StatelessAuthFace.register( as, ccm, STLS_AUTH_FACE, publicExecutor );
+            StatelessManageService.register( as, privateExecutor, scope, securityOptions );
+            StatelessManageFace.register( as, ccm, STLS_MANAGE_FACE, privateExecutor, securityOptions );
+            StatelessAuthService.register( as, publicExecutor, scope, securityOptions );
+            StatelessAuthFace.register( as, ccm, STLS_AUTH_FACE, publicExecutor, securityOptions );
 
-            MasterManageService.register( as, privateExecutor, scope );
-            MasterManageFace.register( as, ccm, MASTER_MANAGE_FACE, privateExecutor );
-            MasterAuthService.register( as, publicExecutor, scope );
-            MasterAuthFace.register( as, ccm, MASTER_AUTH_FACE, publicExecutor );
-            MasterAutoregService.register( as, publicExecutor, scope );
-            MasterAutoregFace.register( as, ccm, MASTER_AUTOREG_FACE, publicExecutor );
+            MasterManageService.register( as, privateExecutor, scope, securityOptions );
+            MasterManageFace.register( as, ccm, MASTER_MANAGE_FACE, privateExecutor, securityOptions );
+            MasterAuthService.register( as, publicExecutor, scope, securityOptions );
+            MasterAuthFace.register( as, ccm, MASTER_AUTH_FACE, publicExecutor, securityOptions );
+            MasterAutoregService.register( as, publicExecutor, scope, securityOptions );
+            MasterAutoregFace.register( as, ccm, MASTER_AUTOREG_FACE, publicExecutor, securityOptions );
         } );
 
         as.add( ( as ) => {

@@ -44,7 +44,9 @@ module.exports = function( describe, it, databaseConfig ) {
     } ) );
 
     after( 'specific', function() {
-        vars.app.close();
+        if ( vars.app ) {
+            vars.app.close();
+        }
     } );
 
     describe( 'Manage', function() {

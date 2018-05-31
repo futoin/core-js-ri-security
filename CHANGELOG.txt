@@ -1,4 +1,7 @@
 
+=== (next) ===
+NEW: implemented CachedManageService
+
 === 0.3.3 (2018-05-31) ===
 NEW: changed to use CachedStorageWrapper
 

@@ -60,6 +60,9 @@ $ yarn add @futoin/security --save
 ## Classes
 
 <dl>
+<dt><a href="#CachedManageService">CachedManageService</a></dt>
+<dd><p>FTN8: Cached Manage Service</p>
+</dd>
 <dt><a href="#ManageFace">ManageFace</a></dt>
 <dd><p>Manage Face</p>
 </dd>
@@ -114,6 +117,24 @@ $ yarn add @futoin/security --save
 <dd><p>Base Service with common registration logic</p>
 </dd>
 </dl>
+
+<a name="CachedManageService"></a>
+
+## CachedManageService
+FTN8: Cached Manage Service
+
+**Kind**: global class  
+<a name="new_CachedManageService_new"></a>
+
+### new CachedManageService(scope, options)
+C-tor
+
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| scope | <code>object</code> |  | scope of related services |
+| options | <code>object</code> |  | passed to superclass c-tor |
+| options.scope | <code>integer</code> | <code>main.globalScope</code> | scope state |
 
 <a name="ManageFace"></a>
 
@@ -196,6 +217,7 @@ C-tor
 | [options.publicExecutorOptions] | <code>object</code> |  | public auto-Executor options |
 | [options.evtOptions] | <code>object</code> |  | eventstream options |
 | [options.secVaultOptions] | <code>object</code> |  | secure vault options |
+| [options.securityOptions] | <code>object</code> |  | security interface options |
 
 <a name="ServiceApp+ccm"></a>
 
@@ -329,11 +351,10 @@ Base Service with common registration logic
 C-tor
 
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| scope | <code>object</code> |  | scope of related services |
-| options | <code>object</code> |  | passed to superclass c-tor |
-| options.scope | <code>integer</code> | <code>main.globalScope</code> | scope state |
+| Param | Type | Description |
+| --- | --- | --- |
+| scope | <code>object</code> | scope of related services |
+| options | <code>object</code> | passed to superclass c-tor |
 
 <a name="BaseService.register"></a>
 
