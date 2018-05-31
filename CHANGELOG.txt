@@ -1,3 +1,7 @@
+
+=== (next) ===
+NEW: changed to use CachedStorageWrapper
+
 === 0.3.2 (2018-05-25) ===
 FIXED: readme & misc.
 

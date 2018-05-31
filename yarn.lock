@@ -263,8 +263,8 @@ browser-stdout@1.3.1:
   resolved "https://registry.yarnpkg.com/browser-stdout/-/browser-stdout-1.3.1.tgz#baa559ee14ced73452229bad7326467c61fabd60"
 
 buffer-from@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.0.0.tgz#4cb8832d23612589b0406e9e2956c17f06fdf531"
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.0.tgz#87fcaa3a298358e0ade6e442cfce840740d1ad04"
 
 buffer-writer@1.0.1:
   version "1.0.1"
@@ -553,9 +553,9 @@ deep-eql@^3.0.0:
   dependencies:
     type-detect "^4.0.0"
 
-deep-extend@^0.5.1, deep-extend@~0.5.0:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/deep-extend/-/deep-extend-0.5.1.tgz#b894a9dd90d3023fbf1c55a394fb858eb2066f1f"
+deep-extend@^0.6.0, deep-extend@~0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/deep-extend/-/deep-extend-0.6.0.tgz#c4fa7c95404a17a9c3e8ca7e1537312b736330ac"
 
 deep-is@~0.1.3:
   version "0.1.3"
@@ -888,7 +888,7 @@ functional-red-black-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
 
-futoin-asyncevent@^1.0.0, futoin-asyncevent@^1.0.1, futoin-asyncevent@^1.0.2:
+futoin-asyncevent@^1.0.0, futoin-asyncevent@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/futoin-asyncevent/-/futoin-asyncevent-1.0.2.tgz#1ab952f1feddcb3fbe7eab2f7341190c6c2995cb"
 
@@ -911,11 +911,11 @@ futoin-database@^1.7.3:
     sqlite3 "^3.1.13"
     sqlstring "^2.3.0"
 
-futoin-eventstream@^0.9.98:
-  version "0.9.98"
-  resolved "https://registry.yarnpkg.com/futoin-eventstream/-/futoin-eventstream-0.9.98.tgz#1484fad116f91736c9bbcc06ace2a01d14d64359"
+futoin-eventstream@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/futoin-eventstream/-/futoin-eventstream-1.0.0.tgz#b9001d6be57874539a86076604fcc570210d3b10"
   dependencies:
-    futoin-asyncevent "^1.0.1"
+    futoin-asyncevent "^1.0.2"
 
 futoin-executor@^1.9.0:
   version "1.9.0"
@@ -963,13 +963,14 @@ futoin-request@^1.0.1:
   dependencies:
     request "^2.83.0"
 
-futoin-secvault@^0.9.7:
-  version "0.9.7"
-  resolved "https://registry.yarnpkg.com/futoin-secvault/-/futoin-secvault-0.9.7.tgz#e14985eb3d8212a2a056762fc0e7607584476cb5"
+futoin-secvault@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/futoin-secvault/-/futoin-secvault-1.0.1.tgz#da681b1f3e00646890796e574e76cd72f6067113"
   dependencies:
     futoin-hkdf "^1.0.1"
     futoin-uuid "^1.0.0"
     lodash "^4.17.10"
+    lru-cache "^4.1.3"
     pem "^1.12.5"
 
 futoin-uuid@^1.0.0:
@@ -2031,10 +2032,10 @@ qs@~6.5.1:
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
 
 rc@^1.1.7:
-  version "1.2.7"
-  resolved "https://registry.yarnpkg.com/rc/-/rc-1.2.7.tgz#8a10ca30d588d00464360372b890d06dacd02297"
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/rc/-/rc-1.2.8.tgz#cd924bf5200a075b83c188cd6b9e211b7fc0d3ed"
   dependencies:
-    deep-extend "^0.5.1"
+    deep-extend "^0.6.0"
     ini "~1.3.0"
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
@@ -2456,11 +2457,11 @@ supports-color@^3.1.0:
     has-flag "^1.0.0"
 
 table-layout@^0.4.2:
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/table-layout/-/table-layout-0.4.3.tgz#07509e1d72599f2c128a58ac67682ec4ba002af0"
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/table-layout/-/table-layout-0.4.4.tgz#bc5398b2a05e58b67b05dd9238354b89ef27be0f"
   dependencies:
     array-back "^2.0.0"
-    deep-extend "~0.5.0"
+    deep-extend "~0.6.0"
     lodash.padend "^4.6.1"
     typical "^2.6.1"
     wordwrapjs "^3.0.0"
@@ -2656,8 +2657,8 @@ websocket-extensions@>=0.1.1:
   resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.3.tgz#5d2ff22977003ec687a4b87073dfbbac146ccf29"
 
 which@^1.1.1, which@^1.2.4, which@^1.2.9:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/which/-/which-1.3.0.tgz#ff04bdfc010ee547d780bec38e1ac1c2777d253a"
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/which/-/which-1.3.1.tgz#a45043d54f5805316da8d62f9f50918d3da70b0a"
   dependencies:
     isexe "^2.0.0"
 

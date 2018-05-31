@@ -26,6 +26,7 @@ const DBAutoConfig = require( 'futoin-database/AutoConfig' );
 const _merge = require( 'lodash/merge' );
 
 const SQLStorage = require( 'futoin-secvault/lib/storage/SQLStorage' );
+const CachedStorageWrapper = require( 'futoin-secvault/lib/storage/CachedStorageWrapper' );
 const KeyFace = require( 'futoin-secvault/KeyFace' );
 const KeyService = require( 'futoin-secvault/KeyService' );
 const DataFace = require( 'futoin-secvault/DataFace' );
@@ -95,6 +96,7 @@ class ServiceApp {
             privateExecutor,
             notExpectedHandler,
             storagePassword,
+            secVaultOptions,
         } = options;
 
         // minimize exposure
@@ -161,14 +163,24 @@ class ServiceApp {
             DBGenFace.register( as, ccm, EVTGEN_FACE, privateExecutor );
             DBPushService.register( as, privateExecutor, options.evtOptions );
             PushFace.register( as, ccm, EVTPUSH_FACE, privateExecutor );
+        } );
 
+        as.add( ( as ) => {
             // SecVault
-            const sv_storage = new SQLStorage( ccm );
-            KeyService.register( as, privateExecutor, sv_storage, options.secVaultOptions );
+            ccm.alias( EVTGEN_FACE, '#secvault.evtgen' );
+            ccm.alias( EVTPUSH_FACE, '#secvault.evtpush' );
+            const sv_storage = new SQLStorage( ccm, secVaultOptions );
+            const cached_sv_storage = new CachedStorageWrapper(
+                ccm, sv_storage,
+                Object.assign( { evtpushExecutor: privateExecutor }, secVaultOptions )
+            );
+            KeyService.register( as, privateExecutor, cached_sv_storage, secVaultOptions );
             KeyFace.register( as, ccm, SVKEY_FACE, privateExecutor );
-            DataService.register( as, privateExecutor, sv_storage, options.secVaultOptions );
+            DataService.register( as, privateExecutor, cached_sv_storage, secVaultOptions );
             DataFace.register( as, ccm, SVDATA_FACE, privateExecutor );
+        } );
 
+        as.add( ( as ) => {
             // Init of FutoIn Security services
             ManageService.register( as, privateExecutor, scope );
             ManageFace.register( as, ccm, MANAGE_FACE, privateExecutor );
