@@ -1,5 +1,5 @@
 
-=== (next) ===
+=== 0.3.4 (2018-05-31) ===
 NEW: implemented CachedManageService
 
 === 0.3.3 (2018-05-31) ===
