@@ -1,5 +1,5 @@
 
-=== (next) ===
+=== 0.3.3 (2018-05-31) ===
 NEW: changed to use CachedStorageWrapper
 
 === 0.3.2 (2018-05-25) ===
