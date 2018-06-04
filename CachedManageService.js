@@ -20,7 +20,7 @@
  */
 
 const $asyncevent = require( 'futoin-asyncevent' );
-const ReliableEventReceiver = require( 'futoin-eventstream/ReliableEventReceiver' );
+const ReliableReceiver = require( 'futoin-eventstream/ReliableReceiver' );
 
 const ManageService = require( './ManageService' );
 const lruCache = require( 'lru-cache' );
@@ -69,7 +69,7 @@ class CachedManageService extends ManageService {
 
         //---
         const that = this;
-        let receiver = new class extends ReliableEventReceiver {
+        let receiver = new class extends ReliableReceiver {
             constructor() {
                 super( ccm );
             }

@@ -6,11 +6,6 @@
 
   [![NPM](https://nodei.co/npm/@futoin/security.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/@futoin/security/)
 
-# WARNING
-
-This release is technology preview. Implemented features are complete from security point of view.
-However, production load requires proper in-memory caching features.
-
 # About
 
 FutoIn Security Concept is alternative to token based authentication & authorization mechanisms.
