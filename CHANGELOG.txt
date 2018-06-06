@@ -1,4 +1,7 @@
 
+=== (next) ===
+CHANGED: to use performance-enhanced futoin-asyncsteps v2
+
 === 0.3.5 (2018-06-04) ===
 CHANGED: updated to futoin-eventstream v1.1 (incompatible changes)
 
