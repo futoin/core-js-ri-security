@@ -91,6 +91,8 @@ class SimpleSecurityProvider extends SecurityProvider {
     }
 
     _checkStatelessMAC( as, reqinfo, rawreq, sec ) {
+        this._normalizeQueryParams( as, reqinfo );
+
         const auth_face = reqinfo.ccm().iface( STLS_AUTH_FACE );
         const source = this._getSource( reqinfo );
         const base = SpecTools.macBase( rawreq );
@@ -115,6 +117,8 @@ class SimpleSecurityProvider extends SecurityProvider {
     }
 
     _checkMasterMAC( as, reqinfo, rawreq, sec ) {
+        this._normalizeQueryParams( as, reqinfo );
+
         const auth_face = reqinfo.ccm().iface( MASTER_AUTH_FACE );
         const source = this._getSource( reqinfo );
         const base = SpecTools.macBase( rawreq );

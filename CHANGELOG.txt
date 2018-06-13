@@ -1,4 +1,7 @@
 
+=== (next) ===
+NEW: futoin-invoker & futoin-executor v2 support
+
 === 0.3.6 (2018-06-06) ===
 CHANGED: to use performance-enhanced futoin-asyncsteps v2
 
