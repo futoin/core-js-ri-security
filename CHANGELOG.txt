@@ -1,4 +1,7 @@
 
+=== (next) ===
+CHANGED: upgraded to latest FutoIn dependencies
+
 === 0.3.7 (2018-06-13) ===
 NEW: futoin-invoker & futoin-executor v2 support
 
