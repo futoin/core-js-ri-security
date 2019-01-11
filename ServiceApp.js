@@ -221,6 +221,15 @@ class ServiceApp {
     }
 
     /**
+     * Executor instance accessor
+     * @returns {Executor} instance
+     */
+    executor()
+    {
+        return this._public_executor;
+    }
+
+    /**
      * Shutdown of app and related instances
      * @param {callable} [done] - done callback
      */
