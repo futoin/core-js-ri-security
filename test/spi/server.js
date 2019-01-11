@@ -33,9 +33,8 @@ const opts = {
     ccmOptions : {
         prodMode : true,
     },
-    databaseConfig: (() => {
-        switch (process.env.SPI_DB_TYPE)
-        {
+    databaseConfig: ( () => {
+        switch ( process.env.SPI_DB_TYPE ) {
         case 'mysql':
             return {
                 DB_FTNSEC_TYPE: 'mysql',
@@ -59,9 +58,9 @@ const opts = {
                 DB_FTNSEC_SOCKET: `${__dirname}/../ftnsec.db`,
             };
         default:
-            throw new Error('Unknown SPI_DB_TYPE');
+            throw new Error( 'Unknown SPI_DB_TYPE' );
         }
-    })(),
+    } )(),
 };
 
 
@@ -89,18 +88,18 @@ const impl = new class {
 
 $as().add(
     ( as ) => {
-        const app = new ServiceApp(as, opts);
+        const app = new ServiceApp( as, opts );
         const ccm = app.ccm();
-        as.add((as) => {
+        as.add( ( as ) => {
             const manage = ccm.iface( '#ftnsec.manage' );
-            const stls_mng = ccm.iface('#ftnsec.stls.manage');
+            const stls_mng = ccm.iface( '#ftnsec.stls.manage' );
             const system_id = app._scope.system_local_id;
 
             manage.ensureUser( as, 'basicuser', 'example.com' );
             as.add( ( as, res ) => {
                 as.state.basicuser = res;
                 stls_mng.genNewSecret( as, res, system_id, false );
-            });
+            } );
             as.add( ( as, new_secret ) => {
                 as.state.basicpass = new_secret;
             } );
@@ -109,12 +108,12 @@ $as().add(
             as.add( ( as, res ) => {
                 as.state.hmacuser = res;
                 stls_mng.genNewSecret( as, res, system_id, true );
-            });
+            } );
             as.add( ( as, new_secret ) => {
                 as.state.hmacpass = new_secret;
             } );
-        });
-        
+        } );
+
         const executor = app.executor();
 
         executor.register( as, 'spi.test:0.1', impl );

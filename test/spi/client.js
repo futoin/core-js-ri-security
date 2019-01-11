@@ -151,7 +151,7 @@ var child = child_process.fork( __dirname + '/server.js' );
 
 child.send( { test: true } );
 
-child.on( 'message', function({basicuser, basicpass, hmacuser, hmacpass}) {
+child.on( 'message', function( { basicuser, basicpass, hmacuser, hmacpass } ) {
     if ( argv.auth === 'basic' ) {
         creds = `${basicuser}:${basicpass}`;
     } else if ( argv.auth === 'smac' ) {

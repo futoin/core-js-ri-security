@@ -224,8 +224,7 @@ class ServiceApp {
      * Executor instance accessor
      * @returns {Executor} instance
      */
-    executor()
-    {
+    executor() {
         return this._public_executor;
     }
 

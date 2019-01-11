@@ -189,6 +189,7 @@ All-in-one AuthService initialization
 * [ServiceApp](#ServiceApp)
     * [new ServiceApp(as, options)](#new_ServiceApp_new)
     * [.ccm()](#ServiceApp+ccm) ⇒ <code>AdvancedCCM</code>
+    * [.executor()](#ServiceApp+executor) ⇒ <code>Executor</code>
     * [.close([done])](#ServiceApp+close)
 
 <a name="new_ServiceApp_new"></a>
@@ -221,6 +222,13 @@ CCM instance accessor
 
 **Kind**: instance method of [<code>ServiceApp</code>](#ServiceApp)  
 **Returns**: <code>AdvancedCCM</code> - instance  
+<a name="ServiceApp+executor"></a>
+
+### serviceApp.executor() ⇒ <code>Executor</code>
+Executor instance accessor
+
+**Kind**: instance method of [<code>ServiceApp</code>](#ServiceApp)  
+**Returns**: <code>Executor</code> - instance  
 <a name="ServiceApp+close"></a>
 
 ### serviceApp.close([done])
@@ -302,13 +310,13 @@ Base Face with neutral common registration functionality
 
 <a name="BaseFace.LATEST_VERSION"></a>
 
-### BaseFace.LATEST_VERSION
+### BaseFace.LATEST\_VERSION
 Latest supported FTN13 version
 
 **Kind**: static property of [<code>BaseFace</code>](#BaseFace)  
 <a name="BaseFace.PING_VERSION"></a>
 
-### BaseFace.PING_VERSION
+### BaseFace.PING\_VERSION
 Latest supported FTN4 version
 
 **Kind**: static property of [<code>BaseFace</code>](#BaseFace)  
