@@ -1,4 +1,4 @@
-=== (next) ===
+=== 0.3.10 (2019-09-27) ===
 CHANGED: to use nyc instead of istanbul
 CHANGED: dependency maintenance
 
