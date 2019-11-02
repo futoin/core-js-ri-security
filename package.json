@@ -66,6 +66,7 @@
     "futoin-secvault": "^1.1.2"
   },
   "dependencies": {
+    "@futoin/specs": ">=2019.1102.4",
     "futoin-hkdf": "^1.2.1",
     "futoin-uuid": "^1.0.4",
     "lru-cache": "^5.1.1",
