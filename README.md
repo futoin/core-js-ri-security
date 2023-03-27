@@ -346,7 +346,7 @@ Base Service with common registration logic
 
 * [BaseService](#BaseService)
     * [new BaseService(scope, options)](#new_BaseService_new)
-    * [.register(as, executor, scope, options)](#BaseService.register) ⇒ <code>LimitsService</code>
+    * [.register(as, executor, scope, options)](#BaseService.register) ⇒ [<code>BaseService</code>](#BaseService)
 
 <a name="new_BaseService_new"></a>
 
@@ -361,11 +361,11 @@ C-tor
 
 <a name="BaseService.register"></a>
 
-### BaseService.register(as, executor, scope, options) ⇒ <code>LimitsService</code>
+### BaseService.register(as, executor, scope, options) ⇒ [<code>BaseService</code>](#BaseService)
 Register Service with Executor
 
 **Kind**: static method of [<code>BaseService</code>](#BaseService)  
-**Returns**: <code>LimitsService</code> - instance  
+**Returns**: [<code>BaseService</code>](#BaseService) - instance  
 
 | Param | Type | Description |
 | --- | --- | --- |

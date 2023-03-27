@@ -8,7 +8,7 @@ const integration_suite = require( './integrationsuite' );
 
 const AdvancedCCM = require( 'futoin-invoker/AdvancedCCM' );
 
-const DB_PORT = process.env.POSTGRESQL_PORT || '5436';
+const DB_PORT = process.env.POSTGRESQL_PORT || '5432';
 
 describe( 'PostgreSQL', function() {
     before( $as_test( function( as ) {

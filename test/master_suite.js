@@ -3,13 +3,10 @@
 const expect = require( 'chai' ).expect;
 const crypto = require( 'crypto' );
 const $as_test = require( 'futoin-asyncsteps/testcase' );
-const $as_request = require( 'futoin-request' );
 const {
-    SpecTools,
     AdvancedCCM,
 } = require( 'futoin-invoker' );
 const {
-    FTN8_VERSION,
     SVKEY_FACE,
     SVDATA_FACE,
     MANAGE_FACE,

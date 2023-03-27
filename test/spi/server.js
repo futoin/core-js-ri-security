@@ -39,7 +39,7 @@ const opts = {
             return {
                 DB_FTNSEC_TYPE: 'mysql',
                 DB_FTNSEC_HOST: '127.0.0.1',
-                DB_FTNSEC_PORT: '3310',
+                DB_FTNSEC_PORT: '3306',
                 DB_FTNSEC_USER: 'ftntest',
                 DB_FTNSEC_DB: 'ftnsec',
             };
@@ -47,7 +47,7 @@ const opts = {
             return {
                 DB_TYPE: 'postgresql',
                 DB_HOST: '127.0.0.1',
-                DB_PORT: '5436',
+                DB_PORT: '5432',
                 DB_USER: 'ftntest',
                 DB_PASS: 'test',
                 DB_DB: 'postgres',

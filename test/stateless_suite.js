@@ -15,7 +15,7 @@ const {
 const {
     reqinfo2source,
 } = require( '../lib/util' );
-const $as_request = require( 'futoin-request' );
+const tinyJsonHttp = require( 'tiny-json-http' );
 
 module.exports = function( { describe, it, vars } ) {
     let ccm;
@@ -537,20 +537,20 @@ module.exports = function( { describe, it, vars } ) {
                 },
             }, [ spec ] );
 
-            $as_request.post( as, {
+            as.await( tinyJsonHttp.post( {
                 url: `http://localhost:${vars.httpPort}`,
-                json: {
+                data: {
                     f: 'futoin.test.source:0.1:dump',
                 },
                 headers: {
                     'user-agent': 'My Test',
                     cookie: 'FTNID=12345',
                 },
-            } );
-            as.add( ( as, _, res ) => {
-                expect( res ).to.eql( { r:
+            } ) );
+            as.add( ( as, res ) => {
+                expect( res.body ).to.eql( { r:
                     {
-                        source_ip: '127.0.0.1',
+                        source_ip: '::1',
                         user_agent: 'My Test',
                         client_token: '12345',
                     },
