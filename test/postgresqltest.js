@@ -45,7 +45,7 @@ describe( 'PostgreSQL', function() {
                     '-user=ftntest',
                     '-password=test',
                     `-locations=${flyway_locations}`,
-                ]
+                ],
             );
 
             if ( res.status ) {

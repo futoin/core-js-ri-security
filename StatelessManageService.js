@@ -72,7 +72,7 @@ class StatelessManageService extends BaseService {
             this._keyName( params ),
             [ 'shared', 'sign' ],
             for_mac ? 'HMAC' : 'Password',
-            for_mac ? config.key_bits : ( config.password_len << 3 )
+            for_mac ? config.key_bits : ( config.password_len << 3 ),
         );
 
         // SV expose
@@ -101,7 +101,7 @@ class StatelessManageService extends BaseService {
                 if ( err === 'UnknownKeyID' ) {
                     as.error( 'NotSet' );
                 }
-            }
+            },
         );
 
         // SV expose
@@ -142,7 +142,7 @@ class StatelessManageService extends BaseService {
                     reqinfo.result( true );
                     as.success();
                 }
-            }
+            },
         );
     }
 

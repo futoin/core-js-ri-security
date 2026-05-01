@@ -1,6 +1,5 @@
 'use strict';
 
-const expect = require( 'chai' ).expect;
 const crypto = require( 'crypto' );
 const $as_test = require( 'futoin-asyncsteps/testcase' );
 const {
@@ -29,6 +28,11 @@ module.exports = function( { describe, it, vars } ) {
     let user1_id;
     let service1_id;
     let system_id;
+
+    let expect;
+    before( async () => {
+        ( { expect } = ( await import( 'chai' ) ) );
+    } );
 
     before( 'manage', $as_test( ( as ) => {
         ccm = vars.ccm;
@@ -65,14 +69,14 @@ module.exports = function( { describe, it, vars } ) {
                         bits : 256,
                         local_id : service1_id,
                         global_id : 'mstrsvc1.example.com',
-                    }
+                    },
                 );
                 svkey.generateKey(
                     as,
                     `${service1_id}:MSTR:other:${i}:${user1_id}`,
                     [ 'shared', 'derive' ],
                     'HMAC',
-                    { bits : 256 }
+                    { bits : 256 },
                 );
                 as.add( ( as, key_id ) => {
                     svkey.deriveKey(
@@ -85,7 +89,7 @@ module.exports = function( { describe, it, vars } ) {
                         'HKDF',
                         'SHA-256',
                         Buffer.from( 'MAC' ),
-                        {}
+                        {},
                     );
                 } );
             } );
@@ -120,7 +124,7 @@ module.exports = function( { describe, it, vars } ) {
                     .to.equal( 'Master auth is disabled' );
                 expect( err ).to.equal( 'SecurityError' );
                 as.success();
-            }
+            },
         ) );
     } );
 
@@ -181,7 +185,7 @@ module.exports = function( { describe, it, vars } ) {
                             prm,
                             sig: sig256,
                         },
-                        {}
+                        {},
                     );
                     as.add( ( as, res ) => expect( res ).eql( {
                         local_id : service1_id,
@@ -197,7 +201,7 @@ module.exports = function( { describe, it, vars } ) {
                             prm,
                             sig: sig512,
                         },
-                        {}
+                        {},
                     );
                     as.add( ( as, res ) => expect( res ).eql( {
                         local_id : service1_id,
@@ -222,14 +226,14 @@ module.exports = function( { describe, it, vars } ) {
                             prm,
                             sig,
                         },
-                        {}
+                        {},
                     );
                 },
                 ( as, err ) => {
                     expect( err ).equal( 'SecurityError' );
                     expect( as.state.error_info ).equal( 'Authentication failed' );
                     as.success();
-                }
+                },
             ) );
 
             it ( 'should detect invalid derived key', $as_test(
@@ -248,14 +252,14 @@ module.exports = function( { describe, it, vars } ) {
                             prm,
                             sig,
                         },
-                        {}
+                        {},
                     );
                 },
                 ( as, err ) => {
                     expect( err ).equal( 'SecurityError' );
                     expect( as.state.error_info ).equal( 'Authentication failed' );
                     as.success();
-                }
+                },
             ) );
 
             it ( 'should detect KDS mismatch', $as_test(
@@ -274,14 +278,14 @@ module.exports = function( { describe, it, vars } ) {
                             prm,
                             sig,
                         },
-                        {}
+                        {},
                     );
                 },
                 ( as, err ) => {
                     expect( err ).equal( 'SecurityError' );
                     expect( as.state.error_info ).equal( 'Authentication failed' );
                     as.success();
-                }
+                },
             ) );
 
             it ( 'should detect algo mismatch', $as_test(
@@ -300,14 +304,14 @@ module.exports = function( { describe, it, vars } ) {
                             prm,
                             sig,
                         },
-                        {}
+                        {},
                     );
                 },
                 ( as, err ) => {
                     expect( err ).equal( 'SecurityError' );
                     expect( as.state.error_info ).equal( 'Authentication failed' );
                     as.success();
-                }
+                },
             ) );
 
             it ( 'should detect prm mismatch', $as_test(
@@ -326,14 +330,14 @@ module.exports = function( { describe, it, vars } ) {
                             prm: '20180101',
                             sig,
                         },
-                        {}
+                        {},
                     );
                 },
                 ( as, err ) => {
                     expect( err ).equal( 'SecurityError' );
                     expect( as.state.error_info ).equal( 'Authentication failed' );
                     as.success();
-                }
+                },
             ) );
 
             it ( 'should detect if master auth is disabled', $as_test(
@@ -353,7 +357,7 @@ module.exports = function( { describe, it, vars } ) {
                             prm,
                             sig,
                         },
-                        {}
+                        {},
                     );
                 },
                 ( as, err ) => {
@@ -362,7 +366,7 @@ module.exports = function( { describe, it, vars } ) {
                         .to.equal( 'Master auth is disabled' );
                     expect( err ).to.equal( 'SecurityError' );
                     as.success();
-                }
+                },
             ) );
         } );
 
@@ -391,7 +395,7 @@ module.exports = function( { describe, it, vars } ) {
                             kds: 'HKDF256',
                             prm,
                             sig: 'X',
-                        }
+                        },
 
                     );
                     as.add( ( as, res ) => {
@@ -411,7 +415,7 @@ module.exports = function( { describe, it, vars } ) {
                             kds: 'HKDF512',
                             prm,
                             sig: 'X',
-                        }
+                        },
                     );
                     as.add( ( as, res ) => {
                         expect( res ).to.eql( sig512 );
@@ -447,7 +451,7 @@ module.exports = function( { describe, it, vars } ) {
                             prm,
                             sig: sig256,
                         },
-                        {}
+                        {},
                     );
                     as.add( ( as, res ) => expect( res ).eql( {
                         auth: {
@@ -469,7 +473,7 @@ module.exports = function( { describe, it, vars } ) {
                             prm,
                             sig: sig512,
                         },
-                        {}
+                        {},
                     );
                     as.add( ( as, res ) => expect( res ).eql( {
                         auth: {
@@ -500,14 +504,14 @@ module.exports = function( { describe, it, vars } ) {
                             prm,
                             sig,
                         },
-                        {}
+                        {},
                     );
                 },
                 ( as, err ) => {
                     expect( err ).equal( 'SecurityError' );
                     expect( as.state.error_info ).equal( 'Authentication failed' );
                     as.success();
-                }
+                },
             ) );
 
             it ( 'should detect if master auth is disabled', $as_test(
@@ -527,7 +531,7 @@ module.exports = function( { describe, it, vars } ) {
                             prm,
                             sig,
                         },
-                        {}
+                        {},
                     );
                 },
                 ( as, err ) => {
@@ -536,7 +540,7 @@ module.exports = function( { describe, it, vars } ) {
                         .to.equal( 'Master auth is disabled' );
                     expect( err ).to.equal( 'SecurityError' );
                     as.success();
-                }
+                },
             ) );
 
 
@@ -565,7 +569,7 @@ module.exports = function( { describe, it, vars } ) {
                                 prm,
                                 sig,
                             },
-                            {}
+                            {},
                         );
                         as.add( ( as, res ) => expect( res.auth ).eql( {
                             local_id : service1_id,
@@ -578,7 +582,7 @@ module.exports = function( { describe, it, vars } ) {
                         .to.equal( 'Too many derived keys' );
                     expect( err ).to.equal( 'SecurityError' );
                     as.success();
-                }
+                },
             ) );
         } );
 
@@ -594,7 +598,7 @@ module.exports = function( { describe, it, vars } ) {
                     `TEST-RSA-EXCHANGE`,
                     [ 'encrypt', 'temp' ],
                     'RSA',
-                    2048
+                    2048,
                 );
                 as.add( ( as, id ) => {
                     rsa_key_id = id;
@@ -633,23 +637,23 @@ module.exports = function( { describe, it, vars } ) {
                         as,
                         'RSA',
                         rsa_pubkey,
-                        'test.example.com'
+                        'test.example.com',
                     );
                     iface.getNewEncryptedSecret(
                         as,
                         'RSA',
                         rsa_pubkey,
-                        'test.example.com'
+                        'test.example.com',
                     );
                     iface.getNewEncryptedSecret(
                         as,
                         'RSA',
-                        rsa_pubkey
+                        rsa_pubkey,
                     );
                     iface.getNewEncryptedSecret(
                         as,
                         'RSA',
-                        rsa_pubkey
+                        rsa_pubkey,
                     );
                 } );
                 as.add( ( as, { id, esecret } ) => {
@@ -660,7 +664,7 @@ module.exports = function( { describe, it, vars } ) {
                         ccm.iface( SVDATA_FACE ).decrypt(
                             as,
                             rsa_key_id,
-                            Buffer.from( esecret, 'base64' )
+                            Buffer.from( esecret, 'base64' ),
                         );
                         as.add( ( as, new_secret ) => {
                             expect( orig_secret ).to.eql( new_secret );
@@ -676,7 +680,7 @@ module.exports = function( { describe, it, vars } ) {
                         as,
                         'RSA',
                         rsa_pubkey,
-                        'test.example.com'
+                        'test.example.com',
                     );
                 },
                 ( as, err ) => {
@@ -685,7 +689,7 @@ module.exports = function( { describe, it, vars } ) {
                         .to.equal( 'Master auth is disabled' );
                     expect( err ).to.equal( 'SecurityError' );
                     as.success();
-                }
+                },
             ) );
 
             it ( 'should check for Master Auth', $as_test(
@@ -694,7 +698,7 @@ module.exports = function( { describe, it, vars } ) {
                         as,
                         'RSA',
                         rsa_pubkey,
-                        'test.example.com'
+                        'test.example.com',
                     );
                 },
                 ( as, err ) => {
@@ -702,7 +706,7 @@ module.exports = function( { describe, it, vars } ) {
                         .to.equal( 'Master Auth is required' );
                     expect( err ).to.equal( 'SecurityError' );
                     as.success();
-                }
+                },
             ) );
 
             it ( 'should not allow AuthService itself', $as_test(
@@ -718,7 +722,7 @@ module.exports = function( { describe, it, vars } ) {
                                     keyData: secret,
                                 } ),
                                 serviceGlobalId: 'example.com',
-                            }
+                            },
                         );
                     } );
                     as.add( ( as ) => {
@@ -727,7 +731,7 @@ module.exports = function( { describe, it, vars } ) {
                             as,
                             'RSA',
                             rsa_pubkey,
-                            'test.example.com'
+                            'test.example.com',
                         );
                     } );
                 },
@@ -736,7 +740,7 @@ module.exports = function( { describe, it, vars } ) {
                         .to.equal( 'Can not be used by AuthService itself' );
                     expect( err ).to.equal( 'SecurityError' );
                     as.success();
-                }
+                },
             ) );
 
             it ( 'should forbid scoped Master Key for exchange', $as_test(
@@ -746,13 +750,13 @@ module.exports = function( { describe, it, vars } ) {
                         as,
                         'RSA',
                         rsa_pubkey,
-                        'test.example.com'
+                        'test.example.com',
                     );
                     as.add( ( as, { id, esecret } ) => {
                         ccm.iface( SVDATA_FACE ).decrypt(
                             as,
                             rsa_key_id,
-                            Buffer.from( esecret, 'base64' )
+                            Buffer.from( esecret, 'base64' ),
                         );
                         as.add( ( as, raw_key ) => {
                             MasterAuthFace.register(
@@ -764,7 +768,7 @@ module.exports = function( { describe, it, vars } ) {
                                         keyData: Buffer.from( raw_key, 'base64' ),
                                     } ),
                                     serviceGlobalId: 'example.com',
-                                }
+                                },
                             );
                         } );
                     } );
@@ -775,7 +779,7 @@ module.exports = function( { describe, it, vars } ) {
                             as,
                             'RSA',
                             rsa_pubkey,
-                            'test.example.com'
+                            'test.example.com',
                         );
                     } );
                 },
@@ -784,7 +788,7 @@ module.exports = function( { describe, it, vars } ) {
                         .to.equal( 'Scoped Master key cannot be used for exchange' );
                     expect( err ).to.equal( 'SecurityError' );
                     as.success();
-                }
+                },
             ) );
 
             it ( 'should obey Master key count limit', $as_test(
@@ -797,7 +801,7 @@ module.exports = function( { describe, it, vars } ) {
                             as,
                             'RSA',
                             rsa_pubkey,
-                            `test${i}.example.com`
+                            `test${i}.example.com`,
                         ) );
                     } );
                 },
@@ -806,7 +810,7 @@ module.exports = function( { describe, it, vars } ) {
                         .to.equal( 'Too many Master keys' );
                     expect( err ).to.equal( 'SecurityError' );
                     as.success();
-                }
+                },
             ) );
         } );
     } );
@@ -824,7 +828,7 @@ module.exports = function( { describe, it, vars } ) {
             ( as, err ) => {
                 expect( err ).to.equal( 'Missing keyId for StaticMasterAuth' );
                 as.success();
-            }
+            },
         ) );
 
         it ( 'should detect missing keyData', $as_test(
@@ -836,7 +840,7 @@ module.exports = function( { describe, it, vars } ) {
             ( as, err ) => {
                 expect( err ).to.equal( 'Missing keyData for StaticMasterAuth' );
                 as.success();
-            }
+            },
         ) );
 
         it ( 'should check KDS', $as_test(
@@ -850,7 +854,7 @@ module.exports = function( { describe, it, vars } ) {
             ( as, err ) => {
                 expect( err ).to.equal( 'InvokerError: Unknown KDS: invalid' );
                 as.success();
-            }
+            },
         ) );
 
         it ( 'should check macAlgo', $as_test(
@@ -864,7 +868,7 @@ module.exports = function( { describe, it, vars } ) {
             ( as, err ) => {
                 expect( err ).to.equal( 'Only HMAC is supported in StaticMasterAuth' );
                 as.success();
-            }
+            },
         ) );
     } );
 
@@ -883,7 +887,7 @@ module.exports = function( { describe, it, vars } ) {
                 MasterAutoregFace.register(
                     as, tmpccm, 'test',
                     `secure+http://localhost:${vars.httpPort}`,
-                    'master'
+                    'master',
                 );
 
                 as.add( ( as ) => {
@@ -911,7 +915,7 @@ module.exports = function( { describe, it, vars } ) {
                     MasterAutoregFace.register(
                         as, tmpccm, 'test',
                         `secure+http://localhost:${vars.httpPort}`,
-                        'master'
+                        'master',
                     );
                 } );
                 as.add( ( as ) => {
@@ -924,7 +928,7 @@ module.exports = function( { describe, it, vars } ) {
                     .equal( 'Authentication failed' );
                 as.state.tmpccm.close();
                 as.success();
-            }
+            },
         ) );
     } );
 };

@@ -23,7 +23,7 @@ const $asyncevent = require( 'futoin-asyncevent' );
 const ReliableReceiver = require( 'futoin-eventstream/ReliableReceiver' );
 
 const ManageService = require( './ManageService' );
-const lruCache = require( 'lru-cache' );
+const { LRUCache } = require( 'lru-cache' );
 
 const USER_CACHE = Symbol( 'USER_CACHE' );
 
@@ -38,7 +38,7 @@ class CachedManageService extends ManageService {
      * C-tor
      * @param {object} scope - scope of related services
      * @param {object} options - passed to superclass c-tor
-     * @param {integer} options.scope=main.globalScope - scope state
+     * @param {number} [options.scope] - scope state
      */
     constructor( scope, options ) {
         super( scope, options );
@@ -54,7 +54,7 @@ class CachedManageService extends ManageService {
             evtpushExecutor = null,
         } = options;
 
-        this[USER_CACHE] = new lruCache( {
+        this[USER_CACHE] = new LRUCache( {
             max: cacheSize,
             maxAge: ttlMs,
         } );

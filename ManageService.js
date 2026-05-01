@@ -135,7 +135,7 @@ class ManageService extends BaseService {
                         if ( err === 'Duplicate' ) {
                             as.continue();
                         }
-                    }
+                    },
                 );
             } );
         } );

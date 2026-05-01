@@ -1,6 +1,5 @@
 'use strict';
 
-const expect = require( 'chai' ).expect;
 const crypto = require( 'crypto' );
 const $as_test = require( 'futoin-asyncsteps/testcase' );
 
@@ -25,6 +24,11 @@ module.exports = function( { describe, it, vars } ) {
     let user1_id;
     let service1_id;
     let system_id;
+
+    let expect;
+    before( async () => {
+        ( { expect } = ( await import( 'chai' ) ) );
+    } );
 
     before( 'manage', $as_test( ( as ) => {
         ccm = vars.ccm;
@@ -72,7 +76,7 @@ module.exports = function( { describe, it, vars } ) {
                     if ( err === 'NotSet' ) {
                         as.success();
                     }
-                }
+                },
             );
 
             stls_manage.removeSecret( as, user1_id, service1_id, false );
@@ -109,7 +113,7 @@ module.exports = function( { describe, it, vars } ) {
                     if ( err === 'NotSet' ) {
                         as.success();
                     }
-                }
+                },
             );
 
             stls_manage.removeSecret( as, user1_id, service1_id, true );
@@ -135,7 +139,7 @@ module.exports = function( { describe, it, vars } ) {
                     ) {
                         as.success();
                     }
-                }
+                },
             );
 
             // Disabled MAC auth
@@ -154,7 +158,7 @@ module.exports = function( { describe, it, vars } ) {
                     ) {
                         as.success();
                     }
-                }
+                },
             );
         } ) );
     } );
@@ -168,7 +172,7 @@ module.exports = function( { describe, it, vars } ) {
                 stls_auth.checkClear(
                     as,
                     { user : user1_id, secret },
-                    {}
+                    {},
                 );
                 as.add( ( as, { local_id, global_id } ) => {
                     expect( local_id ).to.equal( user1_id );
@@ -195,7 +199,7 @@ module.exports = function( { describe, it, vars } ) {
                         algo : 'HS256',
                         sig,
                     },
-                    {}
+                    {},
                 );
                 as.add( ( as, { local_id, global_id } ) => {
                     expect( local_id ).to.equal( user1_id );
@@ -221,7 +225,7 @@ module.exports = function( { describe, it, vars } ) {
                         user : user1_id,
                         algo : 'HS384',
                         sig : 'abcdef',
-                    }
+                    },
                 );
                 as.add( ( as, res ) => {
                     expect( res ).to.eql( sig );
@@ -235,7 +239,7 @@ module.exports = function( { describe, it, vars } ) {
             as.add( ( as, key ) => {
                 stls_auth.getMACSecret(
                     as,
-                    user1_id
+                    user1_id,
                 );
                 as.add( ( as, res ) => {
                     expect( res ).to.eql( key );
@@ -248,7 +252,7 @@ module.exports = function( { describe, it, vars } ) {
                 stls_auth.checkClear(
                     as,
                     { user : '1234567890123456789012', secret: '123467890' },
-                    {}
+                    {},
                 );
             },
             ( as, err ) => {
@@ -256,7 +260,7 @@ module.exports = function( { describe, it, vars } ) {
                     .to.equal( 'Invalid user or password: 1234567890123456789012' );
                 expect( err ).to.equal( 'SecurityError' );
                 as.success();
-            }
+            },
         ) );
 
         it ( 'should detect unknown user in MAC', $as_test(
@@ -269,7 +273,7 @@ module.exports = function( { describe, it, vars } ) {
                         algo : 'HS256',
                         sig : 'abcdefghijklmnopqrstuvwxyz',
                     },
-                    {}
+                    {},
                 );
             },
             ( as, err ) => {
@@ -277,7 +281,7 @@ module.exports = function( { describe, it, vars } ) {
                     .to.equal( 'Invalid user or password: 1234567890123456789012' );
                 expect( err ).to.equal( 'SecurityError' );
                 as.success();
-            }
+            },
         ) );
 
         it ( 'should detect disabled user in Clear', $as_test(
@@ -288,7 +292,7 @@ module.exports = function( { describe, it, vars } ) {
                     stls_auth.checkClear(
                         as,
                         { user : user1_id, secret },
-                        {}
+                        {},
                     );
                 } );
             },
@@ -297,7 +301,7 @@ module.exports = function( { describe, it, vars } ) {
                     .to.equal( `User is not enabled: ${user1_id}` );
                 expect( err ).to.equal( 'SecurityError' );
                 manage.setUserInfo( as, user1_id, true );
-            }
+            },
         ) );
 
         it ( 'should detect disabled user in Clear', $as_test(
@@ -320,7 +324,7 @@ module.exports = function( { describe, it, vars } ) {
                             algo : 'HS256',
                             sig,
                         },
-                        {}
+                        {},
                     );
                 } );
             },
@@ -329,7 +333,7 @@ module.exports = function( { describe, it, vars } ) {
                     .to.equal( `User is not enabled: ${user1_id}` );
                 expect( err ).to.equal( 'SecurityError' );
                 manage.setUserInfo( as, user1_id, true );
-            }
+            },
         ) );
 
         it ( 'should detect invalid password', $as_test(
@@ -339,7 +343,7 @@ module.exports = function( { describe, it, vars } ) {
                     stls_auth.checkClear(
                         as,
                         { user : user1_id, secret : secret.slice( 1 ) },
-                        {}
+                        {},
                     );
                 } );
             },
@@ -348,7 +352,7 @@ module.exports = function( { describe, it, vars } ) {
                     .to.equal( `Invalid user or password: ${user1_id}` );
                 expect( err ).to.equal( 'SecurityError' );
                 as.success();
-            }
+            },
         ) );
 
         it ( 'should detect invalid signature', $as_test(
@@ -369,7 +373,7 @@ module.exports = function( { describe, it, vars } ) {
                             algo : 'HS256',
                             sig : sig.slice( 1 ),
                         },
-                        {}
+                        {},
                     );
                 } );
             },
@@ -378,7 +382,7 @@ module.exports = function( { describe, it, vars } ) {
                     .to.equal( `Invalid user or password: ${user1_id}` );
                 expect( err ).to.equal( 'SecurityError' );
                 as.success();
-            }
+            },
         ) );
 
         it ( 'should detect if clear auth is disabled', $as_test(
@@ -387,7 +391,7 @@ module.exports = function( { describe, it, vars } ) {
                 stls_auth.checkClear(
                     as,
                     { user : '1234567890123456789012', secret: '123467890' },
-                    {}
+                    {},
                 );
             },
             ( as, err ) => {
@@ -396,7 +400,7 @@ module.exports = function( { describe, it, vars } ) {
                     .to.equal( 'Clear text auth is disabled' );
                 expect( err ).to.equal( 'SecurityError' );
                 as.success();
-            }
+            },
         ) );
 
         it ( 'should detect if MAC auth is disabled', $as_test(
@@ -410,7 +414,7 @@ module.exports = function( { describe, it, vars } ) {
                         algo : 'HS256',
                         sig : 'abcdefghijklmnopqrstuvwxyz',
                     },
-                    {}
+                    {},
                 );
             },
             ( as, err ) => {
@@ -419,7 +423,7 @@ module.exports = function( { describe, it, vars } ) {
                     .to.equal( 'Stateless MAC auth is disabled' );
                 expect( err ).to.equal( 'SecurityError' );
                 as.success();
-            }
+            },
         ) );
     } );
 
@@ -432,7 +436,7 @@ module.exports = function( { describe, it, vars } ) {
                 MasterAutoregFace.register(
                     as, tmpccm, 'test',
                     `secure+http://localhost:${vars.httpPort}`,
-                    `${user1_id}:${secret}`
+                    `${user1_id}:${secret}`,
                 );
             } );
             as.add( ( as ) => {
@@ -454,7 +458,7 @@ module.exports = function( { describe, it, vars } ) {
                     MasterAutoregFace.register(
                         as, tmpccm, 'test',
                         `secure+http://localhost:${vars.httpPort}`,
-                        `${user1_id}:${secret}123`
+                        `${user1_id}:${secret}123`,
                     );
                 } );
                 as.add( ( as ) => {
@@ -467,7 +471,7 @@ module.exports = function( { describe, it, vars } ) {
                     .match( /^Invalid user or password:/ );
                 as.state.tmpccm.close();
                 as.success();
-            }
+            },
         ) );
 
         it ( 'should work with MAC', $as_test( ( as ) => {
@@ -479,7 +483,7 @@ module.exports = function( { describe, it, vars } ) {
                     as, tmpccm, 'test',
                     `secure+http://localhost:${vars.httpPort}`,
                     `-smac:${user1_id}`,
-                    { macKey }
+                    { macKey },
                 );
             } );
             as.add( ( as ) => {
@@ -502,7 +506,7 @@ module.exports = function( { describe, it, vars } ) {
                         as, tmpccm, 'test',
                         `secure+http://localhost:${vars.httpPort}`,
                         `-smac:${user1_id}`,
-                        { macKey: '123' + macKey }
+                        { macKey: '123' + macKey },
                     );
                 } );
                 as.add( ( as ) => {
@@ -515,7 +519,7 @@ module.exports = function( { describe, it, vars } ) {
                     .match( /^Invalid user or password:/ );
                 as.state.tmpccm.close();
                 as.success();
-            }
+            },
         ) );
 
         it ( 'should collect user-agent and client token', $as_test( ( as ) => {

@@ -1,12 +1,16 @@
 'use strict';
 
-const expect = require( 'chai' ).expect;
 const $as_test = require( 'futoin-asyncsteps/testcase' );
 const {
     MANAGE_FACE,
 } = require( '../lib/main' );
 
 module.exports = function( { it, vars } ) {
+    let expect;
+    before( async () => {
+        ( { expect } = ( await import( 'chai' ) ) );
+    } );
+
     let ccm;
 
     before( 'manage', () => {
@@ -38,7 +42,7 @@ module.exports = function( { it, vars } ) {
             expect( err ).to.equal( 'InternalError' );
             expect( as.state.error_info ).to.equal( 'AuthService is not enabled' );
             as.success();
-        }
+        },
     ) );
 
     it ( 'should config', $as_test( ( as ) => {
@@ -186,6 +190,6 @@ module.exports = function( { it, vars } ) {
             expect( err ).to.equal( 'UnknownUser' );
             expect( as.state.error_info ).to.equal( 'UserID: 1234567890123456789012' );
             as.success();
-        }
+        },
     ) );
 };

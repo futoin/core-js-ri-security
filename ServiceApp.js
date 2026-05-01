@@ -74,16 +74,15 @@ const SimpleSecurityProvider = require( './SimpleSecurityProvider' );
 class ServiceApp {
     /**
      * C-tor
-     *
      * @param {AsyncSteps} as - AsyncSteps interface
-     * @param {object} options={} - options
+     * @param {object} [options] - options
      * @param {AdvancedCCM} [options.ccm] - external CCM instance
      * @param {Executor} [options.publicExecutor] - external public executor instance
      * @param {Executor} [options.privateExecutor] - external private executor instance
      * @param {string} [options.storagePassword] - Base64 encoded KEK for storage
      * @param {object} [options.config] - config overrides for MasterService
      * @param {object} [options.ccmOptions] - auto-CCM options
-     * @param {callable} [options.notExpectedHandler] - 'notExpected' error handler
+     * @param {Function} [options.notExpectedHandler] - 'notExpected' error handler
      * @param {object} [options.privateExecutorOptions] - private auto-Executor options
      * @param {object} [options.publicExecutorOptions] - public auto-Executor options
      * @param {object} [options.evtOptions] - eventstream options
@@ -132,14 +131,13 @@ class ServiceApp {
             const securityProvider = new SimpleSecurityProvider();
             const opts = Object.assign(
                 { securityProvider },
-                options.publicExecutorOptions
+                options.publicExecutorOptions,
             );
             publicExecutor = new NodeExecutor( ccm, opts );
         }
 
         if ( !notExpectedHandler ) {
             notExpectedHandler = function() {
-                // eslint-disable-next-line no-console
                 console.log( arguments );
             };
         }
@@ -174,7 +172,7 @@ class ServiceApp {
             const sv_storage = new SQLStorage( ccm, secVaultOptions );
             const cached_sv_storage = new CachedStorageWrapper(
                 ccm, sv_storage,
-                Object.assign( { evtpushExecutor: privateExecutor }, secVaultOptions )
+                Object.assign( { evtpushExecutor: privateExecutor }, secVaultOptions ),
             );
             KeyService.register( as, privateExecutor, cached_sv_storage, secVaultOptions );
             KeyFace.register( as, ccm, SVKEY_FACE, privateExecutor );
@@ -230,7 +228,7 @@ class ServiceApp {
 
     /**
      * Shutdown of app and related instances
-     * @param {callable} [done] - done callback
+     * @param {Function} [done] - done callback
      */
     close( done=null ) {
         if ( this._ccm ) {

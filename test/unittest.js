@@ -1,3 +1,6 @@
 'use strict';
 
-const expect = require( 'chai' ).expect;
+let expect;
+before( async () => {
+    ( { expect } = ( await import( 'chai' ) ) );
+} );

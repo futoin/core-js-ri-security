@@ -1,6 +1,5 @@
 'use strict';
 
-const expect = require( 'chai' ).expect;
 const $as_test = require( 'futoin-asyncsteps/testcase' );
 const $as = require( 'futoin-asyncsteps' );
 const ServiceApp = require( '../ServiceApp' );
@@ -17,6 +16,11 @@ module.exports = function( describe, it, databaseConfig ) {
         ccm: null,
     };
     const STORAGE_PASSWORD = 'e3b694af320229f9b464a358eae063a8';
+
+    let expect;
+    before( async () => {
+        ( { expect } = ( await import( 'chai' ) ) );
+    } );
 
     before( 'common', $as_test( ( as ) => {
         vars.httpPort = httpPort;

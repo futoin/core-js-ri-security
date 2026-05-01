@@ -106,7 +106,8 @@ $ yarn add @futoin/security --save
 <p>NOTE: this implementation rotates only derived keys</p>
 </dd>
 <dt><a href="#BaseFace">BaseFace</a></dt>
-<dd><p>Base Face with neutral common registration functionality</p>
+<dd><p>Base Face with neutral common registration functionality
+Not official API</p>
 </dd>
 <dt><a href="#BaseService">BaseService</a></dt>
 <dd><p>Base Service with common registration logic</p>
@@ -125,11 +126,11 @@ FTN8: Cached Manage Service
 C-tor
 
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| scope | <code>object</code> |  | scope of related services |
-| options | <code>object</code> |  | passed to superclass c-tor |
-| options.scope | <code>integer</code> | <code>main.globalScope</code> | scope state |
+| Param | Type | Description |
+| --- | --- | --- |
+| scope | <code>object</code> | scope of related services |
+| options | <code>object</code> | passed to superclass c-tor |
+| [options.scope] | <code>number</code> | scope state |
 
 <a name="ManageFace"></a>
 
@@ -187,33 +188,33 @@ All-in-one AuthService initialization
 **Kind**: global class  
 
 * [ServiceApp](#ServiceApp)
-    * [new ServiceApp(as, options)](#new_ServiceApp_new)
+    * [new ServiceApp(as, [options])](#new_ServiceApp_new)
     * [.ccm()](#ServiceApp+ccm) ⇒ <code>AdvancedCCM</code>
     * [.executor()](#ServiceApp+executor) ⇒ <code>Executor</code>
     * [.close([done])](#ServiceApp+close)
 
 <a name="new_ServiceApp_new"></a>
 
-### new ServiceApp(as, options)
+### new ServiceApp(as, [options])
 C-tor
 
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| as | <code>AsyncSteps</code> |  | AsyncSteps interface |
-| options | <code>object</code> | <code>{}</code> | options |
-| [options.ccm] | <code>AdvancedCCM</code> |  | external CCM instance |
-| [options.publicExecutor] | <code>Executor</code> |  | external public executor instance |
-| [options.privateExecutor] | <code>Executor</code> |  | external private executor instance |
-| [options.storagePassword] | <code>string</code> |  | Base64 encoded KEK for storage |
-| [options.config] | <code>object</code> |  | config overrides for MasterService |
-| [options.ccmOptions] | <code>object</code> |  | auto-CCM options |
-| [options.notExpectedHandler] | <code>callable</code> |  | 'notExpected' error handler |
-| [options.privateExecutorOptions] | <code>object</code> |  | private auto-Executor options |
-| [options.publicExecutorOptions] | <code>object</code> |  | public auto-Executor options |
-| [options.evtOptions] | <code>object</code> |  | eventstream options |
-| [options.secVaultOptions] | <code>object</code> |  | secure vault options |
-| [options.securityOptions] | <code>object</code> |  | security interface options |
+| Param | Type | Description |
+| --- | --- | --- |
+| as | <code>AsyncSteps</code> | AsyncSteps interface |
+| [options] | <code>object</code> | options |
+| [options.ccm] | <code>AdvancedCCM</code> | external CCM instance |
+| [options.publicExecutor] | <code>Executor</code> | external public executor instance |
+| [options.privateExecutor] | <code>Executor</code> | external private executor instance |
+| [options.storagePassword] | <code>string</code> | Base64 encoded KEK for storage |
+| [options.config] | <code>object</code> | config overrides for MasterService |
+| [options.ccmOptions] | <code>object</code> | auto-CCM options |
+| [options.notExpectedHandler] | <code>function</code> | 'notExpected' error handler |
+| [options.privateExecutorOptions] | <code>object</code> | private auto-Executor options |
+| [options.publicExecutorOptions] | <code>object</code> | public auto-Executor options |
+| [options.evtOptions] | <code>object</code> | eventstream options |
+| [options.secVaultOptions] | <code>object</code> | secure vault options |
+| [options.securityOptions] | <code>object</code> | security interface options |
 
 <a name="ServiceApp+ccm"></a>
 
@@ -238,7 +239,7 @@ Shutdown of app and related instances
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| [done] | <code>callable</code> | <code></code> | done callback |
+| [done] | <code>function</code> | <code></code> | done callback |
 
 <a name="SimpleSecurityProvider"></a>
 
@@ -282,26 +283,26 @@ NOTE: this implementation rotates only derived keys
 **Kind**: global class  
 <a name="new_StaticMasterAuth_new"></a>
 
-### new StaticMasterAuth(options, keyId, keyData, [paramFormat], [kds], [macAlgo])
+### new StaticMasterAuth(options)
 C-tor
 
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| options | <code>object</code> |  | Options |
-| keyId | <code>string</code> |  | master key ID |
-| keyData | <code>string</code> |  | master key data in Base64 |
-| [paramFormat] | <code>string</code> | <code>&quot;YYYYMMDD&quot;</code> | format for derivation parameter |
-| [kds] | <code>string</code> | <code>&quot;HKDF256&quot;</code> | key derivation strategy |
-| [macAlgo] | <code>string</code> | <code>&quot;HS256&quot;</code> | MAC algorithm |
+| Param | Type | Description |
+| --- | --- | --- |
+| options | <code>object</code> | Options |
+| options.keyId | <code>string</code> | master key ID |
+| options.keyData | <code>string</code> | master key data in Base64 |
+| [options.paramFormat] | <code>string</code> | format for derivation parameter |
+| [options.kds] | <code>string</code> | key derivation strategy |
+| [options.macAlgo] | <code>string</code> | MAC algorithm |
 
 <a name="BaseFace"></a>
 
 ## BaseFace
 Base Face with neutral common registration functionality
+Not official API
 
 **Kind**: global class  
-**Note**: Not official API  
 
 * [BaseFace](#BaseFace)
     * [.LATEST_VERSION](#BaseFace.LATEST_VERSION)
@@ -332,10 +333,10 @@ CCM registration helper
 | as | <code>AsyncSteps</code> |  | steps interface |
 | ccm | <code>AdvancedCCM</code> |  | CCM instance |
 | name | <code>string</code> |  | CCM registration name |
-| endpoint | <code>\*</code> |  | see AdvancedCCM#register |
-| [credentials] | <code>\*</code> | <code></code> | see AdvancedCCM#register |
-| [options] | <code>object</code> | <code>{}</code> | interface options |
-| [options.version] | <code>string</code> | <code>&quot;1.0&quot;</code> | interface version to use |
+| endpoint | <code>any</code> |  | see AdvancedCCM#register |
+| [credentials] | <code>any</code> | <code></code> | see AdvancedCCM#register |
+| [options] | <code>object</code> |  | interface options |
+| [options.version] | <code>string</code> |  | interface version to use |
 
 <a name="BaseService"></a>
 

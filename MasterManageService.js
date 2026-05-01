@@ -82,7 +82,7 @@ class MasterManageService extends BaseService {
                     bits : config.key_bits,
                     local_id : user_info.local_id,
                     global_id : user_info.global_id,
-                }
+                },
             );
             as.add( ( as, key_id ) => {
                 evtgen.addEvent( as, 'MSTR_NEW', { user, key_id, scope } );

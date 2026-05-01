@@ -33,13 +33,12 @@ const hkdf = require( 'futoin-hkdf' );
 class StaticMasterAuth extends MasterAuth {
     /**
      * C-tor
-     *
      * @param {object} options - Options
-     * @param {string} keyId - master key ID
-     * @param {string} keyData - master key data in Base64
-     * @param {string} [paramFormat=YYYYMMDD] - format for derivation parameter
-     * @param {string} [kds=HKDF256] - key derivation strategy
-     * @param {string} [macAlgo=HS256] - MAC algorithm
+     * @param {string} options.keyId - master key ID
+     * @param {string} options.keyData - master key data in Base64
+     * @param {string} [options.paramFormat] - format for derivation parameter
+     * @param {string} [options.kds] - key derivation strategy
+     * @param {string} [options.macAlgo] - MAC algorithm
      */
     constructor( {
         keyId, keyData,

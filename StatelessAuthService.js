@@ -73,7 +73,7 @@ class StatelessAuthService extends BaseService {
                 if ( err === 'InvalidSignature' ) {
                     as.error( Errors.SecurityError, `Invalid user or password: ${user}` );
                 }
-            }
+            },
         );
     }
 

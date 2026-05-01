@@ -31,13 +31,12 @@ class MasterAutoregFace extends BaseFace {
 
     /**
      * CCM registration helper
-     *
      * @function MasterAutoregFace.register
      * @param {AsyncSteps} as - steps interface
      * @param {AdvancedCCM} ccm - CCM instance
      * @param {string} name - CCM registration name
-     * @param {*} endpoint - see AdvancedCCM#register
-     * @param {*} [credentials=null] - see AdvancedCCM#register
+     * @param {any} endpoint - see AdvancedCCM#register
+     * @param {any} [credentials=null] - see AdvancedCCM#register
      * @param {object} [options={}] - interface options
      * @param {string} [options.version=<latest>] - interface version to use
      */

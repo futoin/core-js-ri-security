@@ -44,7 +44,7 @@ describe( 'MySQL', function() {
                     `-url=jdbc:mysql://127.0.0.1:${DB_PORT}/ftnsec`,
                     '-user=ftntest',
                     `-locations=${flyway_locations}`,
-                ]
+                ],
             );
 
             if ( res.status ) {

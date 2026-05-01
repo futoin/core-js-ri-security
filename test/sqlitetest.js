@@ -53,7 +53,7 @@ describe( 'SQLite', function() {
                     '-user=fake',
                     '-password=fake',
                     `-locations=${flyway_locations}`,
-                ]
+                ],
             );
 
             if ( res.status ) {

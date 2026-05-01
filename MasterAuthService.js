@@ -68,7 +68,7 @@ class MasterAuthService extends BaseService {
         const { macf, hash } = secutil.parseMACAlgo( as, algo );
         secutil.ensureDerivedKey(
             as, ccm, 'MAC',
-            { msid, type: macf, kds, salt: global_id, prm }
+            { msid, type: macf, kds, salt: global_id, prm },
         );
         as.add( ( as, { auth_info, dsid } ) => {
             secutil.checkUser( as, ccm, auth_info.local_id, source );
@@ -90,7 +90,7 @@ class MasterAuthService extends BaseService {
                 if ( err !== Errors.SecurityError ) {
                     as.error( Errors.SecurityError, 'Authentication failed' );
                 }
-            }
+            },
         );
     }
 
@@ -112,7 +112,7 @@ class MasterAuthService extends BaseService {
         const { macf, hash } = secutil.parseMACAlgo( as, algo );
         secutil.ensureDerivedKey(
             as, ccm, 'MAC',
-            { msid, type: macf, kds, salt: global_id, prm, forbid_derive: true }
+            { msid, type: macf, kds, salt: global_id, prm, forbid_derive: true },
         );
         as.add( ( as, { dsid } ) => {
             ccm.iface( SVDATA_FACE ).sign( as, dsid, base, hash );
@@ -134,7 +134,7 @@ class MasterAuthService extends BaseService {
                     secutil.encryptKey(
                         as, ccm,
                         { key_id: dsid, emode },
-                        { msid, type: etype, kds, salt: global_id, prm: dsid }
+                        { msid, type: etype, kds, salt: global_id, prm: dsid },
                     );
                     as.add( ( as, ekey ) => {
                         reqinfo.result( {
@@ -151,7 +151,7 @@ class MasterAuthService extends BaseService {
                 if ( err !== Errors.SecurityError ) {
                     as.error( Errors.SecurityError, 'Authentication failed' );
                 }
-            }
+            },
         );
     }
 
@@ -249,7 +249,7 @@ class MasterAuthService extends BaseService {
                     bits : this._scope.config.key_bits,
                     local_id : user,
                     global_id : key_info.params.global_id,
-                }
+                },
             );
             as.add( ( as, key_id ) => {
                 evtgen.addEvent( as, 'MSTR_NEW', { user, key_id, scope } );
